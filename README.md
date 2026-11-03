@@ -1,7 +1,7 @@
 # encs4380-dynamics--Chinatown-
 # ENCS4380 Homework 1: Dynamic Characteristics Toolkit
 
-**Live site:** (https://github.com/shahdfarraj/encs4380-dynamics--Chinatown-)
+**Live site:** https://shahdfarraj.github.io/encs4380-dynamics--Chinatown-/
 
 ## What is this?
 A web page that shows how a sensor responds over time. It runs in the browser only.
