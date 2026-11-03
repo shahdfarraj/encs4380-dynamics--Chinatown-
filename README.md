@@ -43,3 +43,4 @@ Result: PASS
 ## Use of AI tools
 We used Claude to help write the code.
 We tested it and can explain every line.
+Related issue: #1
