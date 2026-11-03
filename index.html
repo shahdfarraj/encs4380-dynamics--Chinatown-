@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ENCS4380 Homework 1, Module 1: first-order time response (thermometer).">
+<title>Module 1 | First-order time response</title>
+<style>
+  :root { --blue:#2563eb; --orange:#ea580c; --red:#dc2626; --green:#15803d; --ink:#111827; --mut:#6b7280; --line:#e5e7eb; --bg:#f6f7f9; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+  header.top { background: #0f172a; color: #fff; padding: 20px 0; }
+  header.top .eyebrow { margin: 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; }
+  header.top h1 { margin: 4px 0 2px; font-size: 26px; }
+  header.top .sub { margin: 0; color: #cbd5e1; }
+  h2 { margin: 0 0 10px; font-size: 17px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+  .intro { margin-top: 16px; }
+  .intro p { margin: 0 0 8px; }
+  .eq { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #f1f5f9; border-radius: 8px; padding: 8px 12px; margin: 6px 0; overflow-x: auto; white-space: nowrap; font-size: 14px; }
+  .note { color: var(--mut); font-size: 13px; margin: 8px 0 0; }
+
+  /* phones: cards follow the --o order; desktop: left and right columns */
+  .layout { display: flex; flex-direction: column; gap: 16px; margin: 16px 0 40px; }
+  .col { display: contents; }
+  .col > * { order: var(--o, 0); }
+  @media (min-width: 960px) {
+    .layout { display: grid; grid-template-columns: 380px minmax(0, 1fr); align-items: start; }
+    .col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+    .col > * { order: 0; }
+  }
+  .chart { width: 100%; height: 340px; overflow: hidden; position: relative; }
+  .chart.tall { height: 400px; }
+  .chart svg { display: block; }
+
+  .ctl { margin: 0 0 12px; }
+  .ctl label.t { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; margin-bottom: 2px; }
+  .ctl output { font-variant-numeric: tabular-nums; color: var(--blue); }
+  input[type=range] { width: 100%; accent-color: var(--blue); }
+  .seg { display: flex; gap: 8px; }
+  .seg label { flex: 1; text-align: center; border: 1px solid var(--line); border-radius: 8px; padding: 8px; cursor: pointer; font-weight: 600; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg label:has(input:checked) { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .seg label:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .chk { display: flex; gap: 8px; align-items: flex-start; margin: 8px 0; font-size: 14px; }
+  .chk input { margin-top: 3px; }
+
+  .predict { border-left: 4px solid var(--orange); }
+  .predict .kicker { color: var(--orange); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin: 0 0 4px; }
+  .predict .pq { font-weight: 600; margin: 0 0 8px; }
+  .opt { display: flex; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin: 6px 0; cursor: pointer; }
+  .opt.good { border-color: var(--green); background: #f0fdf4; }
+  .opt.bad { border-color: var(--red); background: #fef2f2; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 8px; padding: 9px 14px; background: var(--blue); color: #fff; cursor: pointer; }
+  button.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .btns { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+  .fb { margin-top: 10px; padding: 10px 12px; border-radius: 8px; background: #f8fafc; font-size: 14px; }
+  .fb strong.ok { color: var(--green); } .fb strong.no { color: var(--red); }
+  .count { color: var(--mut); font-size: 12px; margin-left: auto; }
+
+  dl { margin: 0; }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  dt { color: var(--mut); } dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+  th { color: var(--mut); font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; }
+  .pass { color: var(--green); font-weight: 700; } .fail { color: var(--red); font-weight: 700; }
+  .err { background: #fef2f2; color: var(--red); padding: 12px; border-radius: 8px; margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">ENCS4380 Interfacing Techniques · Birzeit University</p>
+    <h1>Dynamic Characteristics Toolkit</h1>
+    <p class="sub">Module 1: First-order time response (thermometer)</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <noscript><div class="err">This page needs JavaScript. Please enable it and reload.</div></noscript>
+  <div id="err" class="err" hidden></div>
+
+  <section class="card intro">
+    <h2>A sensor never reports the present</h2>
+    <p>It reports the past, smoothed. A first-order sensor (a thermometer, a thermistor, an RC filter) obeys:</p>
+    <div class="eq">τ·dy/dt + y = K·x(t) &nbsp;&nbsp;⇔&nbsp;&nbsp; G(s) = K / (τs + 1)</div>
+    <div class="eq">Step of size A:&nbsp; y(t) = K·A·(1 − e<sup>−t/τ</sup>) &nbsp;&nbsp;|&nbsp;&nbsp; Ramp of rate R:&nbsp; y(t) = K·R·[t − τ(1 − e<sup>−t/τ</sup>)]</div>
+    <p class="note">Time is in seconds. K is the static gain, τ the time constant. Guess first, then move the sliders.</p>
+  </section>
+
+  <div class="layout">
+    <div class="col">
+      <section class="card predict" id="predict" style="--o:1"></section>
+
+      <section class="card" style="--o:2">
+        <h2>Sensor and input</h2>
+        <div class="ctl"><div class="seg" role="radiogroup" aria-label="Input type">
+          <label><input type="radio" name="mode" value="step" checked> Step</label>
+          <label><input type="radio" name="mode" value="ramp"> Ramp</label></div></div>
+        <div class="ctl"><label class="t" for="K"><span>K (static gain)</span><output id="Kv"></output></label>
+          <input id="K" type="range" min="0.5" max="5" step="0.1" value="1"></div>
+        <div class="ctl"><label class="t" for="tau"><span>τ (time constant, s)</span><output id="tauv"></output></label>
+          <input id="tau" type="range" min="1" max="20" step="0.5" value="10"></div>
+        <div class="ctl"><label class="t" for="A"><span id="Alabel">A (step size)</span><output id="Av"></output></label>
+          <input id="A" type="range" min="1" max="100" step="1" value="60"></div>
+        <div class="ctl"><label class="t" for="probe"><span>Probe time t / τ</span><output id="probev"></output></label>
+          <input id="probe" type="range" min="0" max="6" step="0.05" value="2"></div>
+        <label class="chk"><input id="thermo" type="checkbox"> <span>Thermometer mode: starts in room air at 20 °C (try K = 1, A = 60, τ = 10: room air into 80 °C tea)</span></label>
+        <label class="chk"><input id="lock" type="checkbox" checked> <span>Fixed time axis (0 to 80 s), so changing τ visibly stretches the curve</span></label>
+      </section>
+
+      <section class="card" style="--o:4"><h2>Live readout</h2><dl id="readlist"></dl></section>
+
+      <section class="card" style="--o:6">
+        <h2>Validation check 1</h2>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody"></tbody></table>
+        <p class="note">Uses the current K and A. Expected values come from the slides: 0.632·K·A and 0.95·K·A (tolerance 0.5 % of K·A).</p>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card" style="--o:3">
+        <h2>Response y(t)</h2>
+        <div id="chart1" class="chart tall"></div>
+        <p class="note" id="note1"></p>
+      </section>
+      <section class="card" style="--o:5">
+        <h2>Error fraction on a log axis</h2>
+        <div id="chart2" class="chart"></div>
+        <p class="note" id="note2"></p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+/* Module 1: first-order time response. One file, no libraries, no internet needed:
+   the graphs are drawn by the small SVG chart function below. */
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var MINUS = '−';
+  var BLUE = '#2563eb', ORANGE = '#ea580c', RED = '#dc2626', GREEN = '#15803d', GREY = '#9ca3af';
+  var BASE_C = 20, T_LOCK = 80;
+  var E1 = 1 - Math.exp(-1), E3 = 1 - Math.exp(-3);
+
+  function f(x, d) {
+    if (d === undefined) d = 2;
+    if (x === null || x === undefined || !isFinite(x)) return '—';
+    var s = Math.abs(x) >= 10000 ? x.toExponential(2) : x.toFixed(d);
+    if (parseFloat(s) === 0) s = s.replace('-', '');
+    return s.replace('-', MINUS);
+  }
+  function row(k, v) { return '<div class="row"><dt>' + k + '</dt><dd>' + v + '</dd></div>'; }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+  // ---------------------------------------------------------------
+  // The closed-form responses from the slides
+  // ---------------------------------------------------------------
+  function yStep(K, A, tau, t) { return K * A * (1 - Math.exp(-t / tau)); }                      // step of size A
+  function yRamp(K, R, tau, t) { return K * R * (t - tau * (1 - Math.exp(-t / tau))); }          // ramp x = R*t
+  function errFrac(tau, t) { return Math.exp(-t / tau); }                                        // fraction still missing
+
+  // ---------------------------------------------------------------
+  // A tiny SVG chart (linear or log y axis, lines, dots, labels, legend, hover)
+  //   o = { xr, yr, ylog, xlabel, ylabel, yticks:[{v,label}], series:[{x,y,color,width,dash,name}],
+  //         guides:[{x0,y0,x1,y1,color,width,dash}], points:[{x,y,color,label,shape}],
+  //         texts:[{x,y,text,color,anchor,dx,dy}], hover:function(x){ return {y,text} } }
+  // ---------------------------------------------------------------
+  function niceTicks(a, b, n) {
+    var span = b - a;
+    if (!(span > 0)) return [a];
+    var raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw))), norm = raw / mag;
+    var step = (norm < 1.5 ? 1 : norm < 3 ? 2 : norm < 7 ? 5 : 10) * mag, out = [];
+    for (var i = Math.ceil(a / step - 1e-9); i * step <= b + step * 1e-9; i++) out.push(+(i * step).toPrecision(12));
+    return out;
+  }
+  function tickText(v) { return String(+v.toPrecision(6)).replace('-', MINUS); }
+
+  function chart(el, o) {
+    el._o = o;
+    var W = Math.max(280, el.clientWidth), H = el.clientHeight || 340;
+    var named = o.series.filter(function (sr) { return sr.name; }), rows = 1, cx = 60;
+    var items = named.map(function (sr) { return { sr: sr, w: 30 + sr.name.length * 7 + 22 }; });
+    items.forEach(function (it) { if (cx + it.w > W - 10 && cx > 60) { rows++; cx = 60; } it.row = rows - 1; it.x = cx; cx += it.w; });
+    var m = { l: 60, r: 18, t: 14, b: o.legend === false ? 46 : 46 + rows * 20 };
+    var pw = W - m.l - m.r, ph = H - m.t - m.b;
+    var x0 = o.xr[0], x1 = o.xr[1], y0 = o.yr[0], y1 = o.yr[1];
+    var fy = o.ylog ? function (v) { return Math.log10(Math.max(v, 1e-300)); } : function (v) { return v; };
+    var sx = function (v) { return m.l + (v - x0) / (x1 - x0) * pw; };
+    var sy = function (v) { return m.t + ph - (fy(v) - fy(y0)) / (fy(y1) - fy(y0)) * ph; };
+    var xt = niceTicks(x0, x1, Math.max(3, Math.round(pw / 90)));
+    var yt = o.yticks || niceTicks(y0, y1, Math.max(3, Math.round(ph / 50))).map(function (v) { return { v: v, label: tickText(v) }; });
+    var id = 'clip' + el.id, s = '';
+
+    s += '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12">';
+    s += '<defs><clipPath id="' + id + '"><rect x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '"/></clipPath></defs>';
+    s += '<rect x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '" fill="#fff"/>';
+    xt.forEach(function (v) {
+      var x = sx(v);
+      s += '<line x1="' + x + '" y1="' + m.t + '" x2="' + x + '" y2="' + (m.t + ph) + '" stroke="#e5e7eb"/>';
+      s += '<text x="' + x + '" y="' + (m.t + ph + 16) + '" text-anchor="middle" fill="#6b7280">' + tickText(v) + '</text>';
+    });
+    yt.forEach(function (t) {
+      var y = sy(t.v);
+      if (y < m.t - 1 || y > m.t + ph + 1) return;
+      s += '<line x1="' + m.l + '" y1="' + y + '" x2="' + (m.l + pw) + '" y2="' + y + '" stroke="#e5e7eb"/>';
+      s += '<text x="' + (m.l - 7) + '" y="' + (y + 4) + '" text-anchor="end" fill="#6b7280">' + t.label + '</text>';
+    });
+    s += '<rect x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '" fill="none" stroke="#9ca3af"/>';
+    s += '<text x="' + (m.l + pw / 2) + '" y="' + (m.t + ph + 36) + '" text-anchor="middle" fill="#111827" font-size="13">' + esc(o.xlabel) + '</text>';
+    s += '<text transform="translate(14 ' + (m.t + ph / 2) + ') rotate(-90)" text-anchor="middle" fill="#111827" font-size="13">' + esc(o.ylabel) + '</text>';
+
+    s += '<g clip-path="url(#' + id + ')">';
+    (o.guides || []).forEach(function (g) {
+      s += '<line x1="' + sx(g.x0) + '" y1="' + sy(g.y0) + '" x2="' + sx(g.x1) + '" y2="' + sy(g.y1) + '" stroke="' + g.color + '" stroke-width="' + (g.width || 1.5) + '"' + (g.dash ? ' stroke-dasharray="' + g.dash + '"' : '') + '/>';
+    });
+    o.series.forEach(function (sr) {
+      var d = '', pen = false;
+      for (var i = 0; i < sr.x.length; i++) {
+        if (!isFinite(sr.x[i]) || !isFinite(sr.y[i]) || (o.ylog && sr.y[i] <= 0)) { pen = false; continue; }
+        d += (pen ? 'L' : 'M') + sx(sr.x[i]).toFixed(2) + ',' + sy(sr.y[i]).toFixed(2); pen = true;
+      }
+      s += '<path d="' + d + '" fill="none" stroke="' + sr.color + '" stroke-width="' + (sr.width || 3) + '"' + (sr.dash ? ' stroke-dasharray="' + sr.dash + '"' : '') + ' stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+    (o.points || []).forEach(function (p) {
+      var x = sx(p.x), y = sy(p.y);
+      s += p.shape === 'diamond'
+        ? '<polygon points="' + x + ',' + (y - 8) + ' ' + (x + 8) + ',' + y + ' ' + x + ',' + (y + 8) + ' ' + (x - 8) + ',' + y + '" fill="' + p.color + '" stroke="#fff" stroke-width="1.5"/>'
+        : '<circle cx="' + x + '" cy="' + y + '" r="6" fill="' + p.color + '" stroke="#fff" stroke-width="1.5"/>';
+    });
+    s += '</g>';
+
+    // labels sit outside the clip so they are never cut, and flip to the left near the right edge
+    (o.points || []).forEach(function (p) {
+      if (!p.label) return;
+      var x = sx(p.x), y = sy(p.y), left = x > m.l + pw * 0.72;
+      s += '<text x="' + (x + (left ? -11 : 11)) + '" y="' + (y + (p.dy === undefined ? 16 : p.dy)) + '" text-anchor="' + (left ? 'end' : 'start') + '" fill="' + p.color + '" font-weight="600">' + esc(p.label) + '</text>';
+    });
+    (o.texts || []).forEach(function (t) {
+      s += '<text x="' + (sx(t.x) + (t.dx || 0)) + '" y="' + (sy(t.y) + (t.dy || 0)) + '" text-anchor="' + (t.anchor || 'middle') + '" fill="' + t.color + '" font-weight="600">' + esc(t.text) + '</text>';
+    });
+
+    if (o.legend !== false) {
+      items.forEach(function (it) {
+        var ly = H - 12 - (rows - 1 - it.row) * 20, sr = it.sr;
+        s += '<line x1="' + it.x + '" y1="' + (ly - 4) + '" x2="' + (it.x + 24) + '" y2="' + (ly - 4) + '" stroke="' + sr.color + '" stroke-width="3"' + (sr.dash ? ' stroke-dasharray="' + sr.dash + '"' : '') + '/>';
+        s += '<text x="' + (it.x + 30) + '" y="' + ly + '" fill="#111827">' + esc(sr.name) + '</text>';
+      });
+    }
+    // hover crosshair (filled in by the pointer handler)
+    s += '<g id="hv' + el.id + '" hidden="hidden"><line stroke="#6b7280" stroke-dasharray="3 3"/><circle r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><rect rx="6" fill="#111827" opacity=".9"/><text fill="#fff"></text></g>';
+    s += '<rect id="ov' + el.id + '" x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '" fill="transparent" style="touch-action:pan-y"/>';
+    s += '</svg>';
+    el.innerHTML = s;
+
+    if (o.hover) {
+      var svg = el.firstChild, g = $('hv' + el.id), ov = $('ov' + el.id), ln = g.childNodes[0], dot = g.childNodes[1], bx = g.childNodes[2], tx = g.childNodes[3];
+      var move = function (e) {
+        var r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * W / r.width;
+        var xv = Math.min(x1, Math.max(x0, x0 + (px - m.l) / pw * (x1 - x0))), h = o.hover(xv);
+        if (!h) return;
+        var cx = sx(xv), cy = sy(h.y);
+        ln.setAttribute('x1', cx); ln.setAttribute('x2', cx); ln.setAttribute('y1', m.t); ln.setAttribute('y2', m.t + ph);
+        dot.setAttribute('cx', cx); dot.setAttribute('cy', cy);
+        tx.textContent = h.text;
+        var tw = h.text.length * 6.6 + 14, bxx = cx + 10 + tw > m.l + pw ? cx - 10 - tw : cx + 10;
+        bx.setAttribute('x', bxx); bx.setAttribute('y', m.t + 6); bx.setAttribute('width', tw); bx.setAttribute('height', 22);
+        tx.setAttribute('x', bxx + 7); tx.setAttribute('y', m.t + 21);
+        g.removeAttribute('hidden');
+      };
+      ov.addEventListener('pointermove', move);
+      ov.addEventListener('pointerdown', move);
+      ov.addEventListener('pointerleave', function () { g.setAttribute('hidden', 'hidden'); });
+    }
+  }
+
+  // redraw the charts when their size changes (rotating a phone, resizing the window)
+  function watch(el) {
+    if (typeof ResizeObserver === 'undefined') { window.addEventListener('resize', function () { if (el._o) chart(el, el._o); }); return; }
+    var last = el.clientWidth;
+    new ResizeObserver(function () { if (el.clientWidth !== last && el._o) { last = el.clientWidth; chart(el, el._o); } }).observe(el);
+  }
+
+  // ---------------------------------------------------------------
+  // Read the controls and draw everything
+  // ---------------------------------------------------------------
+  function read() {
+    return {
+      mode: document.querySelector('input[name="mode"]:checked').value,
+      K: parseFloat($('K').value), tau: parseFloat($('tau').value),
+      A: parseFloat($('A').value),            // step size A, or ramp rate R in ramp mode
+      probe: parseFloat($('probe').value), thermo: $('thermo').checked, lock: $('lock').checked
+    };
+  }
+  function yOut(p, t) { return p.mode === 'step' ? yStep(p.K, p.A, p.tau, t) : yRamp(p.K, p.A, p.tau, t); }
+
+  function drawCharts(p) {
+    var base = p.thermo ? BASE_C : 0, tmax = p.lock ? T_LOCK : 6 * p.tau, N = 400, KA = p.K * p.A, i;
+    var t = [], y = [];
+    for (i = 0; i <= N; i++) { var v = i * tmax / N; t.push(v); y.push(base + yOut(p, v)); }
+    var tp = p.probe * p.tau, guides = [], points = [], texts = [], series;
+    var hi, lo;
+
+    if (p.mode === 'step') {
+      hi = base + KA * 1.1; lo = base - KA * 0.05;
+      series = [
+        { x: [0, 0, tmax], y: [base, base + KA, base + KA], color: GREY, width: 2, dash: '7 5', name: 'Ideal output K·x(t)' },
+        { x: t, y: y, color: BLUE, width: 3, name: 'Sensor output y(t)' }
+      ];
+      var y1 = base + KA * E1, y3 = base + KA * E3;
+      guides.push({ x0: p.tau, y0: base, x1: p.tau, y1: y1, color: GREY, dash: '2 4' }, { x0: 0, y0: y1, x1: p.tau, y1: y1, color: GREY, dash: '2 4' },
+                  { x0: 3 * p.tau, y0: base, x1: 3 * p.tau, y1: y3, color: GREY, dash: '2 4' }, { x0: 0, y0: y3, x1: 3 * p.tau, y1: y3, color: GREY, dash: '2 4' });
+      points.push({ x: p.tau, y: y1, color: ORANGE, label: '63.2 % at τ' }, { x: 3 * p.tau, y: y3, color: ORANGE, label: '95 % at 3τ' });
+    } else {
+      hi = base + KA * tmax * 1.05; lo = base - KA * tmax * 0.03;
+      series = [
+        { x: [0, tmax], y: [base, base + KA * tmax], color: GREY, width: 2, dash: '7 5', name: 'Ideal output K·x(t)' },
+        { x: t, y: y, color: BLUE, width: 3, name: 'Sensor output y(t)' }
+      ];
+      var ta = Math.min(5 * p.tau, 0.85 * tmax), ya = base + yRamp(p.K, p.A, p.tau, ta);
+      var tb = (ya - base) / KA, yideal = base + KA * ta;               // time at which the ideal ramp reaches ya
+      guides.push({ x0: tb, y0: ya, x1: ta, y1: ya, color: ORANGE, width: 3.5 }, { x0: ta, y0: ya, x1: ta, y1: yideal, color: RED, width: 3.5 });
+      texts.push({ x: (tb + ta) / 2, y: ya, text: 'lag = ' + f(ta - tb, 1) + ' s → τ = ' + f(p.tau, 1) + ' s', color: ORANGE, dy: 18 },
+                 { x: ta, y: (ya + yideal) / 2, text: 'error → K·R·τ = ' + f(KA * p.tau, 1), color: RED, anchor: 'end', dx: -9, dy: 4 });
+    }
+    points.push({ x: tp, y: base + yOut(p, tp), color: GREEN, shape: 'diamond' });
+    chart($('chart1'), {
+      xr: [0, tmax], yr: [lo, hi], xlabel: 'Time t (s)', ylabel: p.thermo ? 'Reading (°C)' : 'Output y',
+      series: series, guides: guides, points: points, texts: texts,
+      hover: function (x) {
+        var yy = base + yOut(p, x);
+        return { y: yy, text: 't = ' + f(x, 1) + ' s   y = ' + f(yy, 2) + (p.mode === 'step' ? '   (' + f(100 * (1 - errFrac(p.tau, x)), 1) + ' %)' : '') };
+      }
+    });
+
+    var e = t.map(function (v) { return errFrac(p.tau, v); });
+    chart($('chart2'), {
+      xr: [0, tmax], yr: [0.001, 1.2], ylog: true, legend: false, xlabel: 'Time t (s)', ylabel: p.mode === 'step' ? '(y_final − y) / y_final' : '(e_ss − e) / e_ss',
+      yticks: [1, 0.368, 0.1, 0.05, 0.01, 0.001].map(function (v) { return { v: v, label: String(v) }; }),
+      series: [{ x: t, y: e, color: BLUE, width: 3 }],
+      guides: [{ x0: p.tau, y0: 0.001, x1: p.tau, y1: errFrac(p.tau, p.tau), color: GREY, dash: '2 4' }, { x0: 3 * p.tau, y0: 0.001, x1: 3 * p.tau, y1: errFrac(p.tau, 3 * p.tau), color: GREY, dash: '2 4' }],
+      points: [{ x: p.tau, y: errFrac(p.tau, p.tau), color: ORANGE, label: 'e⁻¹ = 0.368 at τ' }, { x: 3 * p.tau, y: errFrac(p.tau, 3 * p.tau), color: ORANGE, label: 'e⁻³ = 0.050 at 3τ' }, { x: tp, y: errFrac(p.tau, tp), color: GREEN, shape: 'diamond' }],
+      hover: function (x) { return { y: errFrac(p.tau, x), text: 't = ' + f(x, 1) + ' s   error = ' + f(errFrac(p.tau, x), 4) }; }
+    });
+  }
+
+  function drawReadouts(p) {
+    var base = p.thermo ? BASE_C : 0, unit = p.thermo ? ' °C' : '', KA = p.K * p.A, tp = p.probe * p.tau, h = '';
+    var s = (Math.log(errFrac(p.tau, 3 * p.tau)) - Math.log(errFrac(p.tau, p.tau))) / (2 * p.tau);   // slope of ln(error) between tau and 3 tau
+    if (p.mode === 'step') {
+      h += row('Final value K·A', f(base + KA) + unit);
+      h += row('y(τ) = ' + f(100 * E1, 1) + ' %', f(base + KA * E1) + unit);
+      h += row('y(3τ) = ' + f(100 * E3, 1) + ' %', f(base + KA * E3) + unit);
+      h += row('Probe: y(' + f(tp, 1) + ' s)', f(base + yStep(p.K, p.A, p.tau, tp)) + unit + ' (' + f(100 * (1 - errFrac(p.tau, tp)), 1) + ' %)');
+    } else {
+      h += row('Ideal slope K·R', f(KA) + ' per s');
+      h += row('Time lag at steady state', 'τ = ' + f(p.tau, 1) + ' s');
+      h += row('Steady-state error K·R·τ', f(KA * p.tau) + unit);
+      h += row('Probe: error at ' + f(tp, 1) + ' s', f(KA * p.tau * (1 - errFrac(p.tau, tp))) + ' of ' + f(KA * p.tau));
+    }
+    h += row('Measured slope of ln(error)', f(s, 3) + ' s⁻¹');
+    h += row('− 1/τ', f(-1 / p.tau, 3) + ' s⁻¹');
+    if (tp > (p.lock ? T_LOCK : 6 * p.tau)) h += row('Probe', 'off the plot: untick the fixed time axis');
+    $('readlist').innerHTML = h;
+    $('note1').textContent = (p.mode === 'step'
+      ? 'Orange dots: the output has covered 63.2 % of the way at t = τ and 95 % at t = 3τ. Green diamond: your probe time.'
+      : 'Blue runs parallel to the dashed ideal ramp, a constant τ seconds behind it. In output units that gap is K·R·τ.') + ' Hover or tap the graph to read values.';
+    $('note2').innerHTML = 'A pure exponential is a straight line on a log axis, and the slope of ln(error) against t is ' + MINUS + '1/τ = ' + f(-1 / p.tau, 3) +
+      ' s<sup>' + MINUS + '1</sup> (on this log₁₀ axis: ' + f(-1 / (p.tau * Math.LN10), 4) + ' decades per second). Read any two points off the line and you get τ. This is the log method you will use in Module 4.';
+  }
+
+  function drawValidation(p) {
+    var KA = p.K * p.A, tol = 0.005 * KA;
+    var rows = [['y(τ) = 0.632·K·A', 0.632 * KA, yStep(p.K, p.A, p.tau, p.tau)], ['y(3τ) = 0.95·K·A', 0.95 * KA, yStep(p.K, p.A, p.tau, 3 * p.tau)]];
+    $('vbody').innerHTML = rows.map(function (r) {
+      var ok = Math.abs(r[2] - r[1]) <= tol;
+      return '<tr><td>' + r[0] + '</td><td class="num">' + f(r[1], 3) + '</td><td class="num">' + f(r[2], 3) + '</td><td class="' + (ok ? 'pass' : 'fail') + '">' + (ok ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+    }).join('');
+  }
+
+  // ---------------------------------------------------------------
+  // Predict, then check
+  // ---------------------------------------------------------------
+  var QS = {
+    step: [
+      { q: 'A step of size A hits the sensor at t = 0. At t = τ, what fraction of the final change has the output made?', o: ['37 %', '50 %', '63 %', '95 %'], a: 2,
+        why: 'At t = τ the exponent is −1, so y = K·A·(1 − e⁻¹) = 0.632·K·A, whatever K, A and τ are. 37 % is what is still missing (e⁻¹), and 95 % only arrives at 3τ.', how: 'Check it: the orange dot at t = τ, then try other sliders.' },
+      { q: 'You double τ and leave K and A alone. What happens to the curve?', o: ['The final value doubles', 'Same final value and same shape, but everything takes twice as long', 'The final value halves', 'The curve gets steeper at the start'], a: 1,
+        why: 'τ only sets the time scale. K·A sets where the output ends up. A bigger τ is a slower sensor: same destination, longer trip. The initial slope is K·A/τ, so it gets shallower, not steeper.', how: 'Check it: keep the fixed time axis ticked and drag τ from 5 to 10.' }
+    ],
+    ramp: [
+      { q: 'A ramp is applied. Long after it starts, the output runs parallel to the ideal line. How far behind in time is it?', o: ['No delay, it catches up', 'τ / 2', 'τ', '2τ'], a: 2,
+        why: 'For large t the exponential dies out and y ≈ K·R·(t − τ). The output is the ideal ramp delayed by exactly τ.', how: 'Check it: the orange arrow, then double τ.' },
+      { q: 'What does the vertical gap between the output and the ideal ramp K·x(t) settle to?', o: ['Zero', 'A constant K·R·τ', 'It grows forever', 'It depends on how long you wait'], a: 1,
+        why: 'A delay of τ on a line of slope K·R costs K·R·τ in output units. A steeper ramp or a slower sensor means a bigger steady-state error, but it stops growing.', how: 'Check it: the red line and the readout. Change R, then τ.' }
+    ]
+  };
+  var qi = { step: 0, ramp: 0 };
+  function renderQuestion() {
+    var mode = read().mode, list = QS[mode], q = list[qi[mode]], root = $('predict');
+    root.innerHTML = '<p class="kicker">Predict, then check</p><h2>Commit to a guess first</h2><p class="pq"></p><div class="popts"></div>' +
+      '<div class="btns"><button type="button" class="pcheck" disabled>Check my guess</button><button type="button" class="ghost pnext" hidden>Next question</button><span class="count"></span></div><div class="fb" hidden aria-live="polite"></div>';
+    var qs = function (sel) { return root.querySelector(sel); };
+    qs('.pq').textContent = q.q;
+    qs('.popts').innerHTML = q.o.map(function (o, i) { return '<label class="opt"><input type="radio" name="pred" value="' + i + '"> <span>' + o + '</span></label>'; }).join('');
+    qs('.count').textContent = 'Question ' + (qi[mode] + 1) + ' of ' + list.length;
+    qs('.popts').addEventListener('change', function () { qs('.pcheck').disabled = false; });
+    qs('.pcheck').addEventListener('click', function () {
+      var chosen = root.querySelector('input[name="pred"]:checked'); if (!chosen) return;
+      var pick = parseInt(chosen.value, 10);
+      root.querySelectorAll('.opt').forEach(function (l, i) { l.querySelector('input').disabled = true; if (i === q.a) l.classList.add('good'); else if (i === pick) l.classList.add('bad'); });
+      qs('.fb').innerHTML = (pick === q.a ? '<strong class="ok">Correct.</strong> ' : '<strong class="no">Not quite.</strong> ') + q.why + '<br><em>' + q.how + '</em>';
+      qs('.fb').hidden = false; qs('.pcheck').hidden = true; qs('.pnext').hidden = false;
+    });
+    qs('.pnext').addEventListener('click', function () { qi[mode] = (qi[mode] + 1) % list.length; renderQuestion(); });
+  }
+
+  // ---------------------------------------------------------------
+  function update() {
+    try {
+      var p = read();
+      $('Kv').textContent = f(p.K, 1);
+      $('tauv').textContent = f(p.tau, 1) + ' s';
+      $('Av').textContent = f(p.A, 0) + (p.mode === 'ramp' ? ' per s' : '');
+      $('probev').textContent = f(p.probe, 2) + ' τ = ' + f(p.probe * p.tau, 1) + ' s';
+      $('Alabel').textContent = p.mode === 'step' ? 'A (step size)' : 'R (ramp rate, per s)';
+      drawCharts(p); drawReadouts(p); drawValidation(p);
+      $('err').hidden = true;
+    } catch (e) {
+      $('err').hidden = false;
+      $('err').textContent = 'Something went wrong while drawing: ' + e.message + ' (please send a screenshot of this message).';
+    }
+  }
+
+  ['K', 'tau', 'A', 'probe'].forEach(function (id) { $(id).addEventListener('input', update); });
+  ['thermo', 'lock'].forEach(function (id) { $(id).addEventListener('change', update); });
+  document.querySelectorAll('input[name="mode"]').forEach(function (r) { r.addEventListener('change', function () { update(); renderQuestion(); }); });
+  watch($('chart1')); watch($('chart2'));
+  renderQuestion();
+  update();
+})();
+</script>
+</body>
+</html>
