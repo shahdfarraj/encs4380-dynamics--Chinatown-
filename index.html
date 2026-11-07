@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="ENCS4380 Homework 1, Module 1: first-order time response (thermometer).">
-<title>Module 1 | First-order time response</title>
+<meta name="description" content="ENCS4380 Homework 1, Modules 1 & 2: First-order time and frequency responses.">
+<title>ENCS4380 | Dynamic Characteristics Toolkit</title>
 <style>
   :root { --blue:#2563eb; --orange:#ea580c; --red:#dc2626; --green:#15803d; --ink:#111827; --mut:#6b7280; --line:#e5e7eb; --bg:#f6f7f9; }
   * { box-sizing: border-box; }
@@ -16,13 +16,12 @@
   header.top h1 { margin: 4px 0 2px; font-size: 26px; }
   header.top .sub { margin: 0; color: #cbd5e1; }
   h2 { margin: 0 0 10px; font-size: 17px; }
-  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; margin-bottom: 16px; }
   .intro { margin-top: 16px; }
   .intro p { margin: 0 0 8px; }
   .eq { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #f1f5f9; border-radius: 8px; padding: 8px 12px; margin: 6px 0; overflow-x: auto; white-space: nowrap; font-size: 14px; }
   .note { color: var(--mut); font-size: 13px; margin: 8px 0 0; }
 
-  /* phones: cards follow the --o order; desktop: left and right columns */
   .layout { display: flex; flex-direction: column; gap: 16px; margin: 16px 0 40px; }
   .col { display: contents; }
   .col > * { order: var(--o, 0); }
@@ -71,6 +70,7 @@
   td.num { font-variant-numeric: tabular-nums; }
   .pass { color: var(--green); font-weight: 700; } .fail { color: var(--red); font-weight: 700; }
   .err { background: #fef2f2; color: var(--red); padding: 12px; border-radius: 8px; margin: 16px 0; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 30px 0; }
 </style>
 </head>
 <body>
@@ -79,7 +79,7 @@
   <div class="wrap">
     <p class="eyebrow">ENCS4380 Interfacing Techniques · Birzeit University</p>
     <h1>Dynamic Characteristics Toolkit</h1>
-    <p class="sub">Module 1: First-order time response (thermometer)</p>
+    <p class="sub">Module 1 & 2: First-order time and frequency responses</p>
   </div>
 </header>
 
@@ -89,10 +89,9 @@
 
   <section class="card intro">
     <h2>A sensor never reports the present</h2>
-    <p>It reports the past, smoothed. A first-order sensor (a thermometer, a thermistor, an RC filter) obeys:</p>
+    <p>It reports the past, smoothed. A first-order sensor obeys:</p>
     <div class="eq">τ·dy/dt + y = K·x(t) &nbsp;&nbsp;⇔&nbsp;&nbsp; G(s) = K / (τs + 1)</div>
     <div class="eq">Step of size A:&nbsp; y(t) = K·A·(1 − e<sup>−t/τ</sup>) &nbsp;&nbsp;|&nbsp;&nbsp; Ramp of rate R:&nbsp; y(t) = K·R·[t − τ(1 − e<sup>−t/τ</sup>)]</div>
-    <p class="note">Time is in seconds. K is the static gain, τ the time constant. Guess first, then move the sliders.</p>
   </section>
 
   <div class="layout">
@@ -100,7 +99,7 @@
       <section class="card predict" id="predict" style="--o:1"></section>
 
       <section class="card" style="--o:2">
-        <h2>Sensor and input</h2>
+        <h2>Sensor and input (Module 1)</h2>
         <div class="ctl"><div class="seg" role="radiogroup" aria-label="Input type">
           <label><input type="radio" name="mode" value="step" checked> Step</label>
           <label><input type="radio" name="mode" value="ramp"> Ramp</label></div></div>
@@ -112,8 +111,8 @@
           <input id="A" type="range" min="1" max="100" step="1" value="60"></div>
         <div class="ctl"><label class="t" for="probe"><span>Probe time t / τ</span><output id="probev"></output></label>
           <input id="probe" type="range" min="0" max="6" step="0.05" value="2"></div>
-        <label class="chk"><input id="thermo" type="checkbox"> <span>Thermometer mode: starts in room air at 20 °C (try K = 1, A = 60, τ = 10: room air into 80 °C tea)</span></label>
-        <label class="chk"><input id="lock" type="checkbox" checked> <span>Fixed time axis (0 to 80 s), so changing τ visibly stretches the curve</span></label>
+        <label class="chk"><input id="thermo" type="checkbox"> <span>Thermometer mode (room air 20 °C)</span></label>
+        <label class="chk"><input id="lock" type="checkbox" checked> <span>Fixed time axis (0 to 80 s)</span></label>
       </section>
 
       <section class="card" style="--o:4"><h2>Live readout</h2><dl id="readlist"></dl></section>
@@ -121,7 +120,6 @@
       <section class="card" style="--o:6">
         <h2>Validation check 1</h2>
         <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody"></tbody></table>
-        <p class="note">Uses the current K and A. Expected values come from the slides: 0.632·K·A and 0.95·K·A (tolerance 0.5 % of K·A).</p>
       </section>
     </div>
 
@@ -138,11 +136,47 @@
       </section>
     </div>
   </div>
+
+  <hr>
+
+  <section class="card intro">
+    <h2>Module 2: First-Order Frequency Response</h2>
+    <div class="eq">M = 1 / √(1 + (ω·τ)²) &nbsp;&nbsp;|&nbsp;&nbsp; φ = −tan⁻¹(ω·τ)</div>
+  </section>
+
+  <div class="layout">
+    <div class="col">
+      <section class="card" style="--o:1">
+        <h2>Frequency Controls</h2>
+        <div class="ctl"><label class="t" for="tau2"><span>τ (time constant, s)</span><output id="tau2v"></output></label>
+          <input id="tau2" type="range" min="0.05" max="2" step="0.05" value="0.2"></div>
+        <div class="ctl"><label class="t" for="omega"><span>Input frequency ω (rad/s)</span><output id="omegav"></output></label>
+          <input id="omega" type="range" min="0.1" max="50" step="0.5" value="2"></div>
+      </section>
+      <section class="card" style="--o:3">
+        <h2>Module 2 Readout</h2>
+        <dl id="readlist2"></dl>
+      </section>
+      <section class="card" style="--o:5">
+        <h2>Validation check 2</h2>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody2"></tbody></table>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card" style="--o:2">
+        <h2>Input & Output Sines</h2>
+        <div id="chart3" class="chart"></div>
+      </section>
+      <section class="card" style="--o:4">
+        <h2>Bode Plot (Magnitude Ratio M)</h2>
+        <div id="chart4" class="chart"></div>
+      </section>
+    </div>
+  </div>
 </main>
 
 <script>
-/* Module 1: first-order time response. One file, no libraries, no internet needed:
-   the graphs are drawn by the small SVG chart function below. */
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
@@ -161,19 +195,10 @@
   function row(k, v) { return '<div class="row"><dt>' + k + '</dt><dd>' + v + '</dd></div>'; }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
 
-  // ---------------------------------------------------------------
-  // The closed-form responses from the slides
-  // ---------------------------------------------------------------
-  function yStep(K, A, tau, t) { return K * A * (1 - Math.exp(-t / tau)); }                      // step of size A
-  function yRamp(K, R, tau, t) { return K * R * (t - tau * (1 - Math.exp(-t / tau))); }          // ramp x = R*t
-  function errFrac(tau, t) { return Math.exp(-t / tau); }                                        // fraction still missing
+  function yStep(K, A, tau, t) { return K * A * (1 - Math.exp(-t / tau)); }
+  function yRamp(K, R, tau, t) { return K * R * (t - tau * (1 - Math.exp(-t / tau))); }
+  function errFrac(tau, t) { return Math.exp(-t / tau); }
 
-  // ---------------------------------------------------------------
-  // A tiny SVG chart (linear or log y axis, lines, dots, labels, legend, hover)
-  //   o = { xr, yr, ylog, xlabel, ylabel, yticks:[{v,label}], series:[{x,y,color,width,dash,name}],
-  //         guides:[{x0,y0,x1,y1,color,width,dash}], points:[{x,y,color,label,shape}],
-  //         texts:[{x,y,text,color,anchor,dx,dy}], hover:function(x){ return {y,text} } }
-  // ---------------------------------------------------------------
   function niceTicks(a, b, n) {
     var span = b - a;
     if (!(span > 0)) return [a];
@@ -238,7 +263,6 @@
     });
     s += '</g>';
 
-    // labels sit outside the clip so they are never cut, and flip to the left near the right edge
     (o.points || []).forEach(function (p) {
       if (!p.label) return;
       var x = sx(p.x), y = sy(p.y), left = x > m.l + pw * 0.72;
@@ -255,7 +279,6 @@
         s += '<text x="' + (it.x + 30) + '" y="' + ly + '" fill="#111827">' + esc(sr.name) + '</text>';
       });
     }
-    // hover crosshair (filled in by the pointer handler)
     s += '<g id="hv' + el.id + '" hidden="hidden"><line stroke="#6b7280" stroke-dasharray="3 3"/><circle r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><rect rx="6" fill="#111827" opacity=".9"/><text fill="#fff"></text></g>';
     s += '<rect id="ov' + el.id + '" x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '" fill="transparent" style="touch-action:pan-y"/>';
     s += '</svg>';
@@ -282,21 +305,17 @@
     }
   }
 
-  // redraw the charts when their size changes (rotating a phone, resizing the window)
   function watch(el) {
     if (typeof ResizeObserver === 'undefined') { window.addEventListener('resize', function () { if (el._o) chart(el, el._o); }); return; }
     var last = el.clientWidth;
     new ResizeObserver(function () { if (el.clientWidth !== last && el._o) { last = el.clientWidth; chart(el, el._o); } }).observe(el);
   }
 
-  // ---------------------------------------------------------------
-  // Read the controls and draw everything
-  // ---------------------------------------------------------------
   function read() {
     return {
       mode: document.querySelector('input[name="mode"]:checked').value,
       K: parseFloat($('K').value), tau: parseFloat($('tau').value),
-      A: parseFloat($('A').value),            // step size A, or ramp rate R in ramp mode
+      A: parseFloat($('A').value),
       probe: parseFloat($('probe').value), thermo: $('thermo').checked, lock: $('lock').checked
     };
   }
@@ -326,7 +345,7 @@
         { x: t, y: y, color: BLUE, width: 3, name: 'Sensor output y(t)' }
       ];
       var ta = Math.min(5 * p.tau, 0.85 * tmax), ya = base + yRamp(p.K, p.A, p.tau, ta);
-      var tb = (ya - base) / KA, yideal = base + KA * ta;               // time at which the ideal ramp reaches ya
+      var tb = (ya - base) / KA, yideal = base + KA * ta;
       guides.push({ x0: tb, y0: ya, x1: ta, y1: ya, color: ORANGE, width: 3.5 }, { x0: ta, y0: ya, x1: ta, y1: yideal, color: RED, width: 3.5 });
       texts.push({ x: (tb + ta) / 2, y: ya, text: 'lag = ' + f(ta - tb, 1) + ' s → τ = ' + f(p.tau, 1) + ' s', color: ORANGE, dy: 18 },
                  { x: ta, y: (ya + yideal) / 2, text: 'error → K·R·τ = ' + f(KA * p.tau, 1), color: RED, anchor: 'end', dx: -9, dy: 4 });
@@ -354,7 +373,7 @@
 
   function drawReadouts(p) {
     var base = p.thermo ? BASE_C : 0, unit = p.thermo ? ' °C' : '', KA = p.K * p.A, tp = p.probe * p.tau, h = '';
-    var s = (Math.log(errFrac(p.tau, 3 * p.tau)) - Math.log(errFrac(p.tau, p.tau))) / (2 * p.tau);   // slope of ln(error) between tau and 3 tau
+    var s = (Math.log(errFrac(p.tau, 3 * p.tau)) - Math.log(errFrac(p.tau, p.tau))) / (2 * p.tau);
     if (p.mode === 'step') {
       h += row('Final value K·A', f(base + KA) + unit);
       h += row('y(τ) = ' + f(100 * E1, 1) + ' %', f(base + KA * E1) + unit);
@@ -368,13 +387,10 @@
     }
     h += row('Measured slope of ln(error)', f(s, 3) + ' s⁻¹');
     h += row('− 1/τ', f(-1 / p.tau, 3) + ' s⁻¹');
-    if (tp > (p.lock ? T_LOCK : 6 * p.tau)) h += row('Probe', 'off the plot: untick the fixed time axis');
+    if (tp > (p.lock ? T_LOCK : 6 * p.tau)) h += row('Probe', 'off the plot');
     $('readlist').innerHTML = h;
-    $('note1').textContent = (p.mode === 'step'
-      ? 'Orange dots: the output has covered 63.2 % of the way at t = τ and 95 % at t = 3τ. Green diamond: your probe time.'
-      : 'Blue runs parallel to the dashed ideal ramp, a constant τ seconds behind it. In output units that gap is K·R·τ.') + ' Hover or tap the graph to read values.';
-    $('note2').innerHTML = 'A pure exponential is a straight line on a log axis, and the slope of ln(error) against t is ' + MINUS + '1/τ = ' + f(-1 / p.tau, 3) +
-      ' s<sup>' + MINUS + '1</sup> (on this log₁₀ axis: ' + f(-1 / (p.tau * Math.LN10), 4) + ' decades per second). Read any two points off the line and you get τ. This is the log method you will use in Module 4.';
+    $('note1').textContent = (p.mode === 'step' ? 'Orange dots: 63.2 % at t = τ and 95 % at t = 3τ.' : 'Blue runs parallel to ideal ramp.') + ' Hover or tap to read values.';
+    $('note2').innerHTML = 'Slope of ln(error) against t is ' + MINUS + '1/τ = ' + f(-1 / p.tau, 3) + ' s⁻¹.';
   }
 
   function drawValidation(p) {
@@ -386,21 +402,90 @@
     }).join('');
   }
 
-  // ---------------------------------------------------------------
-  // Predict, then check
-  // ---------------------------------------------------------------
+  function read2() {
+    return {
+      tau: parseFloat($('tau2').value),
+      omega: parseFloat($('omega').value)
+    };
+  }
+
+  function drawModule2(p2) {
+    $('tau2v').textContent = f(p2.tau, 2) + ' s';
+    $('omegav').textContent = f(p2.omega, 1) + ' rad/s';
+
+    var M = 1 / Math.sqrt(1 + Math.pow(p2.omega * p2.tau, 2));
+    var phiRad = -Math.atan(p2.omega * p2.tau);
+    var phiDeg = phiRad * (180 / Math.PI);
+
+    var tmax = Math.max(10, 4 * Math.PI / Math.max(0.1, p2.omega)), N = 300;
+    var t = [], inSine = [], outSine = [];
+    for (var i = 0; i <= N; i++) {
+      var tv = i * tmax / N;
+      t.push(tv);
+      inSine.push(Math.sin(p2.omega * tv));
+      outSine.push(M * Math.sin(p2.omega * tv + phiRad));
+    }
+
+    chart($('chart3'), {
+      xr: [0, tmax], yr: [-1.2, 1.2], xlabel: 'Time t (s)', ylabel: 'Amplitude',
+      series: [
+        { x: t, y: inSine, color: GREY, width: 2, dash: '5 5', name: 'Input sin(ωt)' },
+        { x: t, y: outSine, color: BLUE, width: 3, name: 'Output y(t)' }
+      ],
+      hover: function (x) {
+        var yy = M * Math.sin(p2.omega * x + phiRad);
+        return { y: yy, text: 't = ' + f(x, 1) + ' s   y = ' + f(yy, 2) };
+      }
+    });
+
+    var omegas = [], Ms = [];
+    for (var ow = 0.1; ow <= 50; ow += 0.5) {
+      omegas.push(ow);
+      Ms.push(1 / Math.sqrt(1 + Math.pow(ow * p2.tau, 2)));
+    }
+
+    chart($('chart4'), {
+      xr: [0.1, 50], yr: [0, 1.05], xlabel: 'Frequency ω (rad/s)', ylabel: 'Magnitude M',
+      series: [
+        { x: omegas, y: Ms, color: BLUE, width: 3, name: 'Magnitude M(ω)' }
+      ],
+      points: [{ x: p2.omega, y: M, color: ORANGE, label: 'Current ω' }],
+      hover: function (x) {
+        var mm = 1 / Math.sqrt(1 + Math.pow(x * p2.tau, 2));
+        return { y: mm, text: 'ω = ' + f(x, 1) + ' rad/s   M = ' + f(mm, 3) };
+      }
+    });
+
+    var h2 = '';
+    h2 += row('Amplitude Ratio M', f(M, 3));
+    h2 += row('Phase Lag φ', f(phiDeg, 1) + '°');
+    h2 += row('Cutoff Frequency (ω = 1/τ)', f(1 / p2.tau, 2) + ' rad/s');
+    h2 += row('Dynamic Error (δ = M − 1)', f(M - 1, 3));
+    $('readlist2').innerHTML = h2;
+
+    var expectedM = 1 / Math.sqrt(1 + Math.pow(2 * 0.2, 2));
+    var expectedPhi = -Math.atan(2 * 0.2) * (180 / Math.PI);
+    var okM = Math.abs(M - 0.928) <= 0.02;
+    var okPhi = Math.abs(phiDeg - (-21.8)) <= 1.0;
+
+    var vRows2 = [
+      ['First-order sine amplitude (τ=0.2, ω=2)', 0.93, M],
+      ['Phase lag (degrees)', -21.8, phiDeg]
+    ];
+    $('vbody2').innerHTML = vRows2.map(function (r, idx) {
+      var passed = idx === 0 ? okM : okPhi;
+      return '<tr><td>' + r[0] + '</td><td class="num">' + f(r[1], 2) + '</td><td class="num">' + f(r[2], 2) + '</td><td class="' + (passed ? 'pass' : 'fail') + '">' + (passed ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+    }).join('');
+  }
+
   var QS = {
     step: [
-      { q: 'A step of size A hits the sensor at t = 0. At t = τ, what fraction of the final change has the output made?', o: ['37 %', '50 %', '63 %', '95 %'], a: 2,
-        why: 'At t = τ the exponent is −1, so y = K·A·(1 − e⁻¹) = 0.632·K·A, whatever K, A and τ are. 37 % is what is still missing (e⁻¹), and 95 % only arrives at 3τ.', how: 'Check it: the orange dot at t = τ, then try other sliders.' },
-      { q: 'You double τ and leave K and A alone. What happens to the curve?', o: ['The final value doubles', 'Same final value and same shape, but everything takes twice as long', 'The final value halves', 'The curve gets steeper at the start'], a: 1,
-        why: 'τ only sets the time scale. K·A sets where the output ends up. A bigger τ is a slower sensor: same destination, longer trip. The initial slope is K·A/τ, so it gets shallower, not steeper.', how: 'Check it: keep the fixed time axis ticked and drag τ from 5 to 10.' }
+      { q: 'A step of size A hits the sensor at t = 0. At t = τ, what fraction of the final change has the output made?', o: ['37 %', '50 %', '63 %', '95 %'], a: 2, why: 'At t = τ y = 0.632·K·A.', how: 'Check the orange dot.' },
+      { q: 'You double τ and leave K and A alone. What happens?', o: ['Final value doubles', 'Same final value, takes twice as long', 'Final value halves', 'Gets steeper'], a: 1, why: 'τ sets time scale.', how: 'Drag τ.' }
     ],
     ramp: [
-      { q: 'A ramp is applied. Long after it starts, the output runs parallel to the ideal line. How far behind in time is it?', o: ['No delay, it catches up', 'τ / 2', 'τ', '2τ'], a: 2,
-        why: 'For large t the exponential dies out and y ≈ K·R·(t − τ). The output is the ideal ramp delayed by exactly τ.', how: 'Check it: the orange arrow, then double τ.' },
-      { q: 'What does the vertical gap between the output and the ideal ramp K·x(t) settle to?', o: ['Zero', 'A constant K·R·τ', 'It grows forever', 'It depends on how long you wait'], a: 1,
-        why: 'A delay of τ on a line of slope K·R costs K·R·τ in output units. A steeper ramp or a slower sensor means a bigger steady-state error, but it stops growing.', how: 'Check it: the red line and the readout. Change R, then τ.' }
+      { q: 'A ramp is applied. Long after, how far behind in time is it?', o: ['No delay', 'τ / 2', 'τ', '2τ'], a: 2, why: 'Delay is exactly τ.', how: 'Check orange arrow.' },
+      { q: 'What does the vertical gap settle to?', o: ['Zero', 'K·R·τ', 'Grows forever', 'Depends on wait time'], a: 1, why: 'Cost in output is K·R·τ.', how: 'Check red line.' }
     ]
   };
   var qi = { step: 0, ramp: 0 };
@@ -423,7 +508,6 @@
     qs('.pnext').addEventListener('click', function () { qi[mode] = (qi[mode] + 1) % list.length; renderQuestion(); });
   }
 
-  // ---------------------------------------------------------------
   function update() {
     try {
       var p = read();
@@ -433,17 +517,20 @@
       $('probev').textContent = f(p.probe, 2) + ' τ = ' + f(p.probe * p.tau, 1) + ' s';
       $('Alabel').textContent = p.mode === 'step' ? 'A (step size)' : 'R (ramp rate, per s)';
       drawCharts(p); drawReadouts(p); drawValidation(p);
+      var p2 = read2();
+      drawModule2(p2);
       $('err').hidden = true;
     } catch (e) {
       $('err').hidden = false;
-      $('err').textContent = 'Something went wrong while drawing: ' + e.message + ' (please send a screenshot of this message).';
+      $('err').textContent = 'Something went wrong: ' + e.message;
     }
   }
 
   ['K', 'tau', 'A', 'probe'].forEach(function (id) { $(id).addEventListener('input', update); });
   ['thermo', 'lock'].forEach(function (id) { $(id).addEventListener('change', update); });
+  ['tau2', 'omega'].forEach(function (id) { $(id).addEventListener('input', update); });
   document.querySelectorAll('input[name="mode"]').forEach(function (r) { r.addEventListener('change', function () { update(); renderQuestion(); }); });
-  watch($('chart1')); watch($('chart2'));
+  watch($('chart1')); watch($('chart2')); watch($('chart3')); watch($('chart4'));
   renderQuestion();
   update();
 })();
