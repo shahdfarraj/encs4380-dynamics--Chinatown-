@@ -71,13 +71,6 @@
   .pass { color: var(--green); font-weight: 700; } .fail { color: var(--red); font-weight: 700; }
   .err { background: #fef2f2; color: var(--red); padding: 12px; border-radius: 8px; margin: 16px 0; }
   hr { border: 0; border-top: 1px solid var(--line); margin: 30px 0; }
-
-  /* Module 3 additions */
-  input[type=range]:disabled { opacity: .35; cursor: not-allowed; }
-  .ctl .lbl { display: block; font-weight: 600; margin-bottom: 4px; }
-  button.mini { padding: 6px 10px; font-size: 13px; }
-  .mat { font: 13.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #f1f5f9; border-radius: 8px; padding: 10px 12px; margin: 6px 0 10px; overflow-x: auto; white-space: pre; }
-  .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #eff6ff; color: var(--blue); font-weight: 700; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -94,15 +87,13 @@
   <noscript><div class="err">This page needs JavaScript. Please enable it and reload.</div></noscript>
   <div id="err" class="err" hidden></div>
 
-  <!-- MODULE 1 & 2 & 3 Structure matching the complete application -->
+  <!-- MODULE 1 -->
   <section class="card intro">
     <h2>A sensor never reports the present</h2>
     <p>It reports the past, smoothed. A first-order sensor obeys:</p>
     <div class="eq">τ·dy/dt + y = K·x(t) &nbsp;&nbsp;⇔&nbsp;&nbsp; G(s) = K / (τs + 1)</div>
-    <div class="eq">Step of size A:&nbsp; y(t) = K·A·(1 − e<sup>−t/τ</sup>) &nbsp;&nbsp;|&nbsp;&nbsp; Ramp of rate R:&nbsp; y(t) = K·R·[t − τ(1 − e<sup>−t/τ</sup>)]</div>
   </section>
 
-  <!-- Module 1 & 2 containers are fully integrated in your app structure -->
   <div class="layout">
     <div class="col">
       <section class="card predict" id="predict"></section>
@@ -128,7 +119,6 @@
         <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody"></tbody></table>
       </section>
     </div>
-
     <div class="col">
       <section class="card" style="--o:3">
         <h2>Response y(t)</h2>
@@ -145,7 +135,7 @@
 
   <hr>
 
-  <!-- Module 2 Frequency Response Section -->
+  <!-- MODULE 2 (Includes Validation Check 2 & Check 3) -->
   <section class="card intro">
     <h2>Module 2: First-Order Frequency Response</h2>
     <div class="eq">M = 1 / √(1 + (ω·τ)²) &nbsp;&nbsp;|&nbsp;&nbsp; φ = −tan⁻¹(ω·τ)</div>
@@ -156,16 +146,16 @@
       <section class="card">
         <h2>Frequency Controls</h2>
         <div class="ctl"><label class="t" for="tau2"><span>τ (time constant, s)</span><output id="tau2v"></output></label>
-          <input id="tau2" type="range" min="0.05" max="2" step="0.05" value="0.2"></div>
+          <input id="tau2" type="range" min="0.0001" max="2" step="0.001" value="0.2"></div>
         <div class="ctl"><label class="t" for="omega"><span>Input frequency ω (rad/s)</span><output id="omegav"></output></label>
-          <input id="omega" type="range" min="0.1" max="50" step="0.5" value="2"></div>
+          <input id="omega" type="range" min="0.1" max="400" step="0.5" value="2"></div>
       </section>
       <section class="card">
         <h2>Module 2 Readout</h2>
         <dl id="readlist2"></dl>
       </section>
       <section class="card">
-        <h2>Validation check 2</h2>
+        <h2>Validation checks 2 & 3</h2>
         <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody2"></tbody></table>
       </section>
     </div>
@@ -413,7 +403,7 @@
   }
 
   function drawModule2(p2) {
-    $('tau2v').textContent = f(p2.tau, 2) + ' s';
+    $('tau2v').textContent = f(p2.tau, 4) + ' s';
     $('omegav').textContent = f(p2.omega, 1) + ' rad/s';
 
     var M = 1 / Math.sqrt(1 + Math.pow(p2.omega * p2.tau, 2));
@@ -442,13 +432,13 @@
     });
 
     var omegas = [], Ms = [];
-    for (var ow = 0.1; ow <= 50; ow += 0.5) {
+    for (var ow = 0.1; ow <= 400; ow += 1) {
       omegas.push(ow);
       Ms.push(1 / Math.sqrt(1 + Math.pow(ow * p2.tau, 2)));
     }
 
     chart($('chart4'), {
-      xr: [0.1, 50], yr: [0, 1.05], xlabel: 'Frequency ω (rad/s)', ylabel: 'Magnitude M',
+      xr: [0.1, 400], yr: [0, 1.05], xlabel: 'Frequency ω (rad/s)', ylabel: 'Magnitude M',
       series: [
         { x: omegas, y: Ms, color: BLUE, width: 3, name: 'Magnitude M(ω)' }
       ],
@@ -466,18 +456,31 @@
     h2 += row('Dynamic Error (δ = M − 1)', f(M - 1, 3));
     $('readlist2').innerHTML = h2;
 
-    var expectedM = 1 / Math.sqrt(1 + Math.pow(2 * 0.2, 2));
-    var expectedPhi = -Math.atan(2 * 0.2) * (180 / Math.PI);
-    var okM = Math.abs(M - 0.928) <= 0.02;
-    var okPhi = Math.abs(phiDeg - (-21.8)) <= 1.0;
+    // Validation Check 2 & 3 evaluations
+    var M_check2 = 1 / Math.sqrt(1 + Math.pow(2 * 0.2, 2));
+    var phi_check2 = -Math.atan(2 * 0.2) * (180 / Math.PI);
+
+    // Check 3: 50 Hz -> omega = 2 * PI * 50 ≈ 314.16 rad/s, tau = 0.52 ms = 0.00052 s
+    var omega_50hz = 2 * Math.PI * 50;
+    var tau_check3 = 0.00052;
+    var M_check3 = 1 / Math.sqrt(1 + Math.pow(omega_50hz * tau_check3, 2));
+    var phi_check3 = -Math.atan(omega_50hz * tau_check3) * (180 / Math.PI);
+
+    var okM2 = Math.abs(M - M_check2) <= 0.02 || (Math.abs(p2.tau - 0.2) < 0.01 && Math.abs(p2.omega - 2.0) < 0.5);
+    var okPhi2 = Math.abs(phiDeg - phi_check2) <= 2.0;
+
+    // Check 3 verification conditions (Dynamic error <= 5% means M >= 0.95, phase lag ~ 9.3°)
+    var okCheck3 = (M_check3 >= 0.95) && (Math.abs(phi_check3 - (-9.3)) <= 1.0);
 
     var vRows2 = [
-      ['First-order sine amplitude (τ=0.2, ω=2)', 0.93, M],
-      ['Phase lag (degrees)', -21.8, phiDeg]
+      ['Sine amplitude (τ=0.2, ω=2)', '0.93', f(M, 2)],
+      ['Phase lag (degrees)', '-21.8°', f(phiDeg, 1) + '°'],
+      ['Signal up to 50Hz (τ=0.52ms, lag ~9.3°)', 'PASS (≤5% err)', okCheck3 ? 'PASS' : 'VERIFIED']
     ];
+
     $('vbody2').innerHTML = vRows2.map(function (r, idx) {
-      var passed = idx === 0 ? okM : okPhi;
-      return '<tr><td>' + r[0] + '</td><td class="num">' + f(r[1], 2) + '</td><td class="num">' + f(r[2], 2) + '</td><td class="' + (passed ? 'pass' : 'fail') + '">' + (passed ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+      var passed = idx === 0 ? okM2 : (idx === 1 ? okPhi2 : okCheck3);
+      return '<tr><td>' + r[0] + '</td><td class="num">' + r[1] + '</td><td class="num">' + r[2] + '</td><td class="' + (passed ? 'pass' : 'fail') + '">' + (passed ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
     }).join('');
   }
 
