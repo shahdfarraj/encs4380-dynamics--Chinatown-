@@ -13,7 +13,7 @@ It needs no server and no internet connection.
 |---|---|
 | Leen Zuhud | Module 1: First-order time response |
 | Shahd Farraj | Module 2: First-order frequency response |
-
+| Batoul Abu Samhadana | Module 3: second-order response |
 ## Module 1: First-order time response
 A thermometer is slow. It takes time to reach the real temperature.
 The page shows this with a graph.
@@ -47,6 +47,31 @@ You can:
 The slides specify that for $\tau = 0.2\text{ s}$ and input $\sin(2t)$, the output amplitude is 0.93 of the input with a phase lag of $21.8^\circ$. The page checks this automatically and displays PASS or FAIL.
 
 Result: PASS
+## Module 3: Second-order response
+A mass on a spring with a damper (like an accelerometer) does not settle like a thermometer.
+It can swing past the final value and ring, or creep slowly, depending on how much damping it has.
+The page uses:
+$$G(s) = \frac{K\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2}$$
+
+You can:
+- Change the damping ratio zeta and the natural frequency omega_n, or switch to the mass m, damper b and spring k.
+- Jump to the three cases with one click: underdamped (zeta = 0.5), critically damped (zeta = 1) and overdamped (zeta = 2).
+- Tick one box to draw all three cases on the same graph.
+- Read the rise time, peak time, overshoot and settling time directly off the step curve, next to the textbook formulas. The settling band can be 2 % or 5 %.
+- See the poles of G(s) (x) and the eigenvalues of A (o) on the s-plane. They land on the same points.
+- See the state-space matrices A and B update live as m, b and k move.
+- See the phase plane (position against velocity): a spiral when underdamped, no spiral when overdamped.
+- Answer a "Predict, then check" question before moving the sliders.
+
+### Validation checks 4, 5 and 6
+- **Check 4:** zeta = 0.5 gives an overshoot of 16.3 %.
+- **Check 5:** zeta = 1 gives no overshoot.
+- **Check 6:** m = 1, b = 2, k = 4 gives eigenvalues of A = -1 +/- j1.732, equal to the poles.
+
+The page computes each one and shows expected value, our value and PASS or FAIL.
+Buttons on the page put the same values on the graphs.
+
+Result: PASS (all three)
 
 ## Screenshots
 **step response**
@@ -57,8 +82,10 @@ Result: PASS
 <img width="1920" height="1016" alt="image" src="https://github.com/user-attachments/assets/19be6311-cfae-46e9-8169-902a806621a1" />
 **frequency response & Bode plot**
 <img width="1920" height="1016" alt="image" src="screenshot2.png" />
+**check 4,5,6**
+<img width="564" height="293" alt="image" src="https://github.com/user-attachments/assets/53f9789f-6981-4eb3-9966-8631115b28fe" />
 
 ## Use of AI tools
 We used Claude and ChatGPT to help write the code.
 We tested it and can explain every line.
-Related issues: #1, #2
+Related issues: #1, #2, #3
