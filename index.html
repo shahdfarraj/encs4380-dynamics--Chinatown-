@@ -115,7 +115,7 @@
       </section>
       <section class="card" style="--o:4"><h2>Live readout</h2><dl id="readlist"></dl></section>
       
-      <!-- Validation check 1 -->
+      <!-- Validation check 1 Box -->
       <section class="card" style="--o:6">
         <h2>Validation check 1</h2>
         <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody1"></tbody></table>
@@ -158,10 +158,16 @@
         <dl id="readlist2"></dl>
       </section>
       
-      <!-- Validation checks 2 & 3 (في نفس البوكس) -->
+      <!-- Validation check 2 Box -->
       <section class="card">
-        <h2>Validation checks 2 & 3</h2>
-        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody23"></tbody></table>
+        <h2>Validation check 2</h2>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody2"></tbody></table>
+      </section>
+
+      <!-- Validation check 3 Box -->
+      <section class="card">
+        <h2>Validation check 3</h2>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody3"></tbody></table>
       </section>
     </div>
 
@@ -284,7 +290,7 @@
     el.innerHTML = s;
 
     if (o.hover) {
-      var svg = el.firstChild, g = $('hv' + el.id), ov =$('ov' + el.id), ln = g.childNodes[0], dot = g.childNodes[1], bx = g.childNodes[2], tx = g.childNodes[3];
+      var svg = el.firstChild, g = $('hv' + el.id), ov = $('ov' + el.id), ln = g.childNodes[0], dot = g.childNodes[1], bx = g.childNodes[2], tx = g.childNodes[3];
       var move = function (e) {
         var r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * W / r.width;
         var xv = Math.min(x1, Math.max(x0, x0 + (px - m.l) / pw * (x1 - x0))), h = o.hover(xv);
@@ -315,7 +321,7 @@
       mode: document.querySelector('input[name="mode"]:checked').value,
       K: parseFloat($('K').value), tau: parseFloat($('tau').value),
       A: parseFloat($('A').value),
-      probe: parseFloat($('probe').value), thermo: $('thermo').checked, lock:$('lock').checked
+      probe: parseFloat($('probe').value), thermo: $('thermo').checked, lock: $('lock').checked
     };
   }
   function yOut(p, t) { return p.mode === 'step' ? yStep(p.K, p.A, p.tau, t) : yRamp(p.K, p.A, p.tau, t); }
@@ -412,7 +418,8 @@
   }
 
   function drawModule2(p2) {
-    $('tau2v').textContent = f(p2.tau, 4) + ' s';$('omegav').textContent = f(p2.omega, 1) + ' rad/s';
+    $('tau2v').textContent = f(p2.tau, 4) + ' s';
+    $('omegav').textContent = f(p2.omega, 1) + ' rad/s';
 
     var M = 1 / Math.sqrt(1 + Math.pow(p2.omega * p2.tau, 2));
     var phiRad = -Math.atan(p2.omega * p2.tau);
@@ -464,6 +471,7 @@
     h2 += row('Dynamic Error (δ = M − 1)', f(M - 1, 3));
     $('readlist2').innerHTML = h2;
 
+    // Validation Check 2 & 3 evaluations
     var M_check2 = 1 / Math.sqrt(1 + Math.pow(2 * 0.2, 2));
     var phi_check2 = -Math.atan(2 * 0.2) * (180 / Math.PI);
 
@@ -476,5 +484,402 @@
     var okPhi2 = Math.abs(phiDeg - phi_check2) <= 2.0;
     var okCheck3 = (M_check3 >= 0.95) && (Math.abs(phi_check3 - (-9.3)) <= 1.0);
 
-    // دمج فحص 2 و 3 داخل نفس الجدول (البوكس الواحد)
-    $('vbody23').innerHTML = '<tr><td>Sine amplitude (τ=0.2, ω=2) [Check 2]</td><td class="num">0.93</td><td class="num">' + f(M, 2) + '</td><td class="' + (ok
+    // Box 2: Validation check 2
+    $('vbody2').innerHTML = '<tr><td>Sine amplitude (τ=0.2, ω=2)</td><td class="num">0.93</td><td class="num">' + f(M, 2) + '</td><td class="' + (okM2 ? 'pass' : 'fail') + '">' + (okM2 ? '✓ PASS' : '✗ FAIL') + '</td></tr>' +
+                            '<tr><td>Phase lag (degrees)</td><td class="num">-21.8°</td><td class="num">' + f(phiDeg, 1) + '°</td><td class="' + (okPhi2 ? 'pass' : 'fail') + '">' + (okPhi2 ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+
+    // Box 3: Validation check 3
+    $('vbody3').innerHTML = '<tr><td>Signal up to 50Hz (τ=0.52ms, lag ~9.3°)</td><td class="num">PASS (≤5% err)</td><td class="num">' + (okCheck3 ? 'PASS' : 'VERIFIED') + '</td><td class="' + (okCheck3 ? 'pass' : 'fail') + '">' + (okCheck3 ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+  }
+
+  var QS = {
+    step: [
+      { q: 'A step of size A hits the sensor at t = 0. At t = τ, what fraction of the final change has the output made?', o: ['37 %', '50 %', '63 %', '95 %'], a: 2, why: 'At t = τ y = 0.632·K·A.', how: 'Check the orange dot.' },
+      { q: 'You double τ and leave K and A alone. What happens?', o: ['Final value doubles', 'Same final value, takes twice as long', 'Final value halves', 'Gets steeper'], a: 1, why: 'τ sets time scale.', how: 'Drag τ.' }
+    ],
+    ramp: [
+      { q: 'A ramp is applied. Long after, how far behind in time is it?', o: ['No delay', 'τ / 2', 'τ', '2τ'], a: 2, why: 'Delay is exactly τ.', how: 'Check orange arrow.' },
+      { q: 'What does the vertical gap settle to?', o: ['Zero', 'K·R·τ', 'Grows forever', 'Depends on wait time'], a: 1, why: 'Cost in output is K·R·τ.', how: 'Check red line.' }
+    ]
+  };
+  var qi = { step: 0, ramp: 0 };
+  function renderQuestion() {
+    var mode = read().mode, list = QS[mode], q = list[qi[mode]], root = $('predict');
+    root.innerHTML = '<p class="kicker">Predict, then check</p><h2>Commit to a guess first</h2><p class="pq"></p><div class="popts"></div>' +
+      '<div class="btns"><button type="button" class="pcheck" disabled>Check my guess</button><button type="button" class="ghost pnext" hidden>Next question</button><span class="count"></span></div><div class="fb" hidden aria-live="polite"></div>';
+    var qs = function (sel) { return root.querySelector(sel); };
+    qs('.pq').textContent = q.q;
+    qs('.popts').innerHTML = q.o.map(function (o, i) { return '<label class="opt"><input type="radio" name="pred" value="' + i + '"> <span>' + o + '</span></label>'; }).join('');
+    qs('.count').textContent = 'Question ' + (qi[mode] + 1) + ' of ' + list.length;
+    qs('.popts').addEventListener('change', function () { qs('.pcheck').disabled = false; });
+    qs('.pcheck').addEventListener('click', function () {
+      var chosen = root.querySelector('input[name="pred"]:checked'); if (!chosen) return;
+      var pick = parseInt(chosen.value, 10);
+      root.querySelectorAll('.opt').forEach(function (l, i) { l.querySelector('input').disabled = true; if (i === q.a) l.classList.add('good'); else if (i === pick) l.classList.add('bad'); });
+      qs('.fb').innerHTML = (pick === q.a ? '<strong class="ok">Correct.</strong> ' : '<strong class="no">Not quite.</strong> ') + q.why + '<br><em>' + q.how + '</em>';
+      qs('.fb').hidden = false; qs('.pcheck').hidden = true; qs('.pnext').hidden = false;
+    });
+    qs('.pnext').addEventListener('click', function () { qi[mode] = (qi[mode] + 1) % list.length; renderQuestion(); });
+  }
+
+  function update() {
+    try {
+      var p = read();
+      $('Kv').textContent = f(p.K, 1);
+      $('tauv').textContent = f(p.tau, 1) + ' s';
+      $('Av').textContent = f(p.A, 0) + (p.mode === 'ramp' ? ' per s' : '');
+      $('probev').textContent = f(p.probe, 2) + ' τ = ' + f(p.probe * p.tau, 1) + ' s';
+      $('Alabel').textContent = p.mode === 'step' ? 'A (step size)' : 'R (ramp rate, per s)';
+      drawCharts(p); drawReadouts(p); drawValidation(p);
+      var p2 = read2();
+      drawModule2(p2);
+      $('err').hidden = true;
+    } catch (e) {
+      $('err').hidden = false;
+      $('err').textContent = 'Something went wrong: ' + e.message;
+    }
+  }
+
+  ['K', 'tau', 'A', 'probe'].forEach(function (id) { $(id).addEventListener('input', update); });
+  ['thermo', 'lock'].forEach(function (id) { $(id).addEventListener('change', update); });
+  ['tau2', 'omega'].forEach(function (id) { $(id).addEventListener('input', update); });
+  document.querySelectorAll('input[name="mode"]').forEach(function (r) { r.addEventListener('change', function () { update(); renderQuestion(); }); });
+  watch($('chart1')); watch($('chart2')); watch($('chart3')); watch($('chart4'));
+  renderQuestion();
+/* ===== M3 MODEL START ===== */
+  // Unit-step response of G(s) = wn^2 / (s^2 + 2 z wn s + wn^2), final value 1.
+  function ySecond(z, wn, t) {
+    if (t <= 0) return 0;
+    if (z < 1 - 1e-9) {
+      var s = z * wn, wd = wn * Math.sqrt(1 - z * z);
+      return 1 - Math.exp(-s * t) * (Math.cos(wd * t) + (s / wd) * Math.sin(wd * t));
+    }
+    if (z <= 1 + 1e-9) return 1 - (1 + wn * t) * Math.exp(-wn * t);
+    var r = Math.sqrt(z * z - 1), s1 = -wn / (z + r), s2 = -wn * (z + r);
+    return 1 + (s2 * Math.exp(s1 * t) - s1 * Math.exp(s2 * t)) / (s1 - s2);
+  }
+  // Its time derivative dy/dt (this is the velocity x2 in the phase plane).
+  function vSecond(z, wn, t) {
+    if (t <= 0) return 0;
+    if (z < 1 - 1e-9) {
+      var wd = wn * Math.sqrt(1 - z * z);
+      return (wn * wn / wd) * Math.exp(-z * wn * t) * Math.sin(wd * t);
+    }
+    if (z <= 1 + 1e-9) return wn * wn * t * Math.exp(-wn * t);
+    var r = Math.sqrt(z * z - 1), s1 = -wn / (z + r), s2 = -wn * (z + r);
+    return (s1 * s2 / (s1 - s2)) * (Math.exp(s1 * t) - Math.exp(s2 * t));
+  }
+  // Roots of s^2 + 2 z wn s + wn^2 (the poles of G(s)).
+  function poles3(z, wn) {
+    if (z < 1) { var im = wn * Math.sqrt(1 - z * z); return [{ re: -z * wn, im: im }, { re: -z * wn, im: -im }]; }
+    var r = Math.sqrt(z * z - 1);
+    return [{ re: -wn / (z + r), im: 0 }, { re: -wn * (z + r), im: 0 }];
+  }
+  // Eigenvalues of A = [[0,1],[-k/m,-b/m]] from its trace and determinant.
+  function eig3(m, b, k) {
+    var tr = -b / m, det = k / m, d = tr * tr - 4 * det;
+    if (d < 0) { var im = Math.sqrt(-d) / 2; return [{ re: tr / 2, im: im }, { re: tr / 2, im: -im }]; }
+    var q = Math.sqrt(d);
+    return [{ re: (tr + q) / 2, im: 0 }, { re: (tr - q) / 2, im: 0 }];
+  }
+  // Rate at which the slowest part of the response dies away.
+  function slowRate(z, wn) { return z < 1 ? z * wn : wn / (z + Math.sqrt(z * z - 1)); }
+
+  // Reads rise time, peak, overshoot and settling time off the sampled curve.
+  function measure3(z, wn, band) {
+    var sig = slowRate(z, wn);
+    var tshow = Math.min(120, Math.max(2, 6 / sig)), tmeas = Math.min(600, Math.max(tshow, 12 / sig));
+    var N = 12000, dt = tmeas / N, y = new Array(N + 1), i;
+    for (i = 0; i <= N; i++) y[i] = ySecond(z, wn, i * dt);
+    function cross(level) {
+      for (var j = 1; j <= N; j++) {
+        if (y[j - 1] < level && y[j] >= level) return (j - 1) * dt + (level - y[j - 1]) / (y[j] - y[j - 1]) * dt;
+      }
+      return null;
+    }
+    var t10 = cross(0.1), t90 = cross(0.9), pk = null, p = -1;
+    for (i = 1; i < N; i++) { if (y[i] > y[i - 1] && y[i] >= y[i + 1]) { p = i; break; } }
+    if (p > 0 && y[p] > 1 + 1e-9) {
+      var best = y[p], bt = p * dt, a = (p - 1) * dt, c = (p + 1) * dt, k, tt, yy;
+      for (k = 0; k <= 2000; k++) { tt = a + (c - a) * k / 2000; yy = ySecond(z, wn, tt); if (yy > best) { best = yy; bt = tt; } }
+      pk = { t: bt, y: best };
+    }
+    var last = -1, ts = null;
+    for (i = N; i >= 0; i--) { if (Math.abs(y[i] - 1) > band) { last = i; break; } }
+    if (last >= 0 && last < N) {
+      var lvl = y[last] > 1 ? 1 + band : 1 - band;
+      ts = last * dt + (lvl - y[last]) / (y[last + 1] - y[last]) * dt;
+    }
+    return {
+      sig: sig, tshow: tshow, tmeas: tmeas, t10: t10, t90: t90,
+      tr: (t10 !== null && t90 !== null) ? t90 - t10 : null,
+      pk: pk, os: pk ? 100 * (pk.y - 1) : 0, ts: ts
+    };
+  }
+  // Textbook formulas (only meaningful for the underdamped case).
+  function theory3(z, wn, band) {
+    if (z >= 1) return { os: null, tp: null, ts: null };
+    return {
+      os: 100 * Math.exp(-Math.PI * z / Math.sqrt(1 - z * z)),
+      tp: Math.PI / (wn * Math.sqrt(1 - z * z)),
+      ts: (band === 0.02 ? 4 : 3) / (z * wn)
+    };
+  }
+  function damping3(z) { return z < 1 - 1e-9 ? 'Underdamped' : (z > 1 + 1e-9 ? 'Overdamped' : 'Critically damped'); }
+  /* ===== M3 MODEL END ===== */
+
+  /* ===== Module 3 interface ===== */
+  var PURPLE = '#7c3aed';
+
+  function read3() {
+    var mode = document.querySelector('input[name="m3mode"]:checked').value, z, wn, m, b, k;
+    if (mode === 'zw') { z = parseFloat($('m3z').value); wn = parseFloat($('m3w').value); m = 1; k = wn * wn; b = 2 * z * wn; }
+    else { m = parseFloat($('m3m').value); b = parseFloat($('m3b').value); k = parseFloat($('m3k').value); wn = Math.sqrt(k / m); z = b / (2 * Math.sqrt(k * m)); }
+    return { mode: mode, z: z, wn: wn, m: m, b: b, k: k, band: parseFloat(document.querySelector('input[name="m3band"]:checked').value), cmp: $('m3cmp').checked };
+  }
+  function pct(b) { return f(b * 100, 0) + ' %'; }
+  function roots3(r) {
+    if (Math.abs(r[0].im) < 1e-9) return f(r[0].re, 3) + ',  ' + f(r[1].re, 3);
+    return f(r[0].re, 3) + ' ± j' + f(Math.abs(r[0].im), 3);
+  }
+  function same3(a, b) {
+    for (var i = 0; i < 2; i++) {
+      if (Math.abs(a[i].re - b[i].re) > 1e-6 * (1 + Math.abs(a[i].re))) return false;
+      if (Math.abs(a[i].im - b[i].im) > 1e-6 * (1 + Math.abs(a[i].im))) return false;
+    }
+    return true;
+  }
+  function padL(s, n) { while (s.length < n) s = ' ' + s; return s; }
+
+  var V3 = null;   // fixed test values for checks 4, 5, 6 (never depend on the sliders)
+  function drawValidation3() {
+    if (!V3) {
+      var c4 = measure3(0.5, 2, 0.02), c5 = measure3(1, 2, 0.02), e = eig3(1, 2, 4), pl = poles3(2 / (2 * Math.sqrt(4 * 1)), Math.sqrt(4 / 1));
+      V3 = { os4: c4.os, os5: c5.os, e: e, pl: pl };
+    }
+    var rows = [], ok;
+    function add(label, exp, got, tol, d) { ok = Math.abs(got - exp) <= tol; rows.push([label, exp, got, ok, d]); }
+    add('ζ = 0.5: overshoot (%)', 16.3, V3.os4, 0.05, 2);
+    rows.push(['ζ = 1: overshoot (%), must be zero', 0, V3.os5, V3.os5 < 1e-6, 3]);
+    add('m=1, b=2, k=4: eigenvalues of A, real part', -1, V3.e[0].re, 0.001, 3);
+    add('Eigenvalues of A, imaginary part (±j)', 1.732, Math.abs(V3.e[0].im), 0.001, 3);
+    add('Poles of G(s), real part (same numbers)', -1, V3.pl[0].re, 0.001, 3);
+    add('Poles of G(s), imaginary part (±j)', 1.732, Math.abs(V3.pl[0].im), 0.001, 3);
+    $('vbody3').innerHTML = rows.map(function (r, idx) {
+      var tag = idx === 0 ? 'Check 4. ' : idx === 1 ? 'Check 5. ' : idx === 2 ? 'Check 6. ' : '';
+      return '<tr><td>' + tag + r[0] + '</td><td class="num">' + f(r[1], r[4]) + '</td><td class="num">' + f(r[2], r[4]) + '</td><td class="' + (r[3] ? 'pass' : 'fail') + '">' + (r[3] ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+    }).join('');
+  }
+
+  function drawModule3() {
+    var p = read3(), z = p.z, wn = p.wn, mm = measure3(z, wn, p.band), th = theory3(z, wn, p.band), zw = p.mode === 'zw';
+    var pl = poles3(z, wn), eg = eig3(p.m, p.b, p.k), i;
+
+    $('m3zv').textContent = f(z, 2); $('m3wv').textContent = f(wn, 2) + ' rad/s';
+    $('m3mv').textContent = f(p.m, 1); $('m3bv').textContent = f(p.b, 1); $('m3kv').textContent = f(p.k, 1);
+
+    /* readout */
+    var rd = '';
+    rd += row('Damping case', '<span class="tag">' + damping3(z) + '</span>');
+    rd += row('ζ and ωn', f(z, 3) + ' and ' + f(wn, 3) + ' rad/s');
+    if (z < 1) rd += row('Damped frequency ωd', f(wn * Math.sqrt(1 - z * z), 3) + ' rad/s');
+    rd += row('Poles of G(s)', roots3(pl));
+    $('readlist3').innerHTML = rd;
+
+    var bp = pct(p.band);
+    $('m3body').innerHTML =
+      '<tr><td>Rise time (10 % → 90 %)</td><td class="num">' + (mm.tr === null ? '—' : f(mm.tr, 2) + ' s') + '</td><td class="num">—</td></tr>' +
+      '<tr><td>Peak time</td><td class="num">' + (mm.pk ? f(mm.pk.t, 2) + ' s' : 'no peak') + '</td><td class="num">' + (th.tp === null ? '—' : f(th.tp, 2) + ' s') + '</td></tr>' +
+      '<tr><td>Overshoot</td><td class="num">' + f(mm.os, 2) + ' %</td><td class="num">' + (th.os === null ? '0 %' : f(th.os, 2) + ' %') + '</td></tr>' +
+      '<tr><td>Settling time (' + bp + ')</td><td class="num">' + (mm.ts === null ? 'not settled' : f(mm.ts, 2) + ' s') + '</td><td class="num">' + (th.ts === null ? '—' : '≈ ' + f(th.ts, 2) + ' s') + '</td></tr>';
+    $('m3formnote').textContent = 'Left value: measured on the plotted curve. Right value: textbook formula (peak time, overshoot and the ' + (p.band === 0.02 ? '4' : '3') + '/(ζωn) settling estimate apply to the underdamped case).';
+
+    /* chart 5: step response */
+    var n = 600, T = [], Y = [], ymax = 1, tshow = mm.tshow, v;
+    for (i = 0; i <= n; i++) { v = i * tshow / n; T.push(v); Y.push(ySecond(z, wn, v)); if (Y[i] > ymax) ymax = Y[i]; }
+    var series = [{ x: [0, tshow], y: [1, 1], color: GREY, width: 2, dash: '7 5' }];
+    if (p.cmp) {
+      [[0.5, 'ζ = 0.5 underdamped', PURPLE], [1, 'ζ = 1 critical', GREEN], [2, 'ζ = 2 overdamped', ORANGE]].forEach(function (c) {
+        var yy = []; for (var j = 0; j <= n; j++) { yy.push(ySecond(c[0], wn, T[j])); if (yy[j] > ymax) ymax = yy[j]; }
+        series.push({ x: T, y: yy, color: c[2], width: 2, name: c[1] });
+      });
+    }
+    series.push({ x: T, y: Y, color: BLUE, width: p.cmp ? 3 : 3, dash: p.cmp ? '2 5' : null, name: p.cmp ? 'Current: ζ = ' + f(z, 2) + ' (dotted)' : 'Step response y(t)' });
+    var points = [], guides = [], lo1 = 1 - p.band, hi1 = 1 + p.band;
+    guides.push({ x0: 0, y0: hi1, x1: tshow, y1: hi1, color: GREY, dash: '2 4' }, { x0: 0, y0: lo1, x1: tshow, y1: lo1, color: GREY, dash: '2 4' });
+    if (mm.t10 !== null && mm.t10 <= tshow) points.push({ x: mm.t10, y: 0.1, color: GREEN, shape: 'diamond' });
+    if (mm.t90 !== null && mm.t90 <= tshow) points.push({ x: mm.t90, y: 0.9, color: GREEN, shape: 'diamond', label: 'Tr = ' + f(mm.tr, 2) + ' s' });
+    if (mm.pk && mm.pk.t <= tshow) points.push({ x: mm.pk.t, y: mm.pk.y, color: ORANGE, label: 'Peak ' + f(mm.os, 1) + ' % at ' + f(mm.pk.t, 2) + ' s', dy: -12 });
+    if (mm.ts !== null && mm.ts <= tshow * 0.97) {
+      var yts = ySecond(z, wn, mm.ts);
+      guides.push({ x0: mm.ts, y0: -0.05, x1: mm.ts, y1: yts, color: RED, dash: '2 4' });
+      points.push({ x: mm.ts, y: yts, color: RED, label: 'Ts = ' + f(mm.ts, 2) + ' s' });
+    }
+    chart($('chart5'), {
+      xr: [0, tshow], yr: [-0.05, Math.max(1.15, ymax * 1.08)], xlabel: 'Time t (s)', ylabel: 'Output y (final value = 1)',
+      series: series, guides: guides, points: points,
+      hover: function (x) { var yy = ySecond(z, wn, x); return { y: yy, text: 't = ' + f(x, 2) + ' s   y = ' + f(yy, 3) }; }
+    });
+    $('m3note1').textContent = 'Green diamonds: 10 % and 90 % points (rise time). Orange dot: first peak. Red dot: settling time, the last moment the curve leaves the ± ' + bp + ' band. Hover or tap to read values.';
+
+    /* chart 6: s-plane */
+    var maxRe = Math.max(Math.abs(pl[0].re), Math.abs(pl[1].re)), maxIm = Math.max(Math.abs(pl[0].im), Math.abs(pl[1].im));
+    var circ = { x: [], y: [], color: GREY, width: 1.5, dash: '5 5' };
+    for (i = 0; i <= 120; i++) { var a = 2 * Math.PI * i / 120; circ.x.push(wn * Math.cos(a)); circ.y.push(wn * Math.sin(a)); }
+    var sg = [{ x0: -1e4, y0: 0, x1: 1e4, y1: 0, color: GREY, width: 1.2 }, { x0: 0, y0: -1e4, x1: 0, y1: 1e4, color: GREY, width: 1.2 }];
+    var sp = [];
+    pl.forEach(function (q, idx) {
+      var lbl = null;
+      if (z < 1) { if (idx === 0) lbl = f(q.re, 2) + ' ± j' + f(q.im, 2); }
+      else lbl = f(q.re, 2);
+      sp.push({ x: q.re, y: q.im, color: BLUE, shape: 'cross', label: lbl, dy: -14 });
+      if (z < 1) sg.push({ x0: 0, y0: 0, x1: q.re, y1: q.im, color: ORANGE, width: 1.5, dash: '4 4' });
+    });
+    eg.forEach(function (q) { sp.push({ x: q.re, y: q.im, color: ORANGE, shape: 'ring' }); });
+    chart($('chart6'), {
+      xr: [-1, 1], yr: [-1, 1], legend: false, xlabel: 'Real part (1/s)', ylabel: 'Imaginary part (rad/s)',
+      prep: function (pw, ph) {
+        var ratio = pw / ph, R = Math.max(maxIm * 1.35, maxRe * 1.05 / ratio, wn * 1.15, 0.5), hw = R * ratio;
+        return { xr: [-1.1 * hw, 0.9 * hw], yr: [-R, R] };
+      },
+      series: [circ], guides: sg, points: sp
+    });
+
+    /* state-space panel */
+    var a21 = -p.k / p.m, a22 = -p.b / p.m, w = 8;
+    $('m3ss').textContent =
+      'A = [ ' + padL(f(0, 2), w) + padL(f(1, 2), w) + ' ]      B = [ ' + padL(f(0, 2), w) + ' ]\n' +
+      '    [ ' + padL(f(a21, 2), w) + padL(f(a22, 2), w) + ' ]          [ ' + padL(f(1 / p.m, 2), w) + ' ]\n' +
+      'x = [x₁, x₂] = [displacement, velocity]      y = [1  0]·x\n' +
+      'm = ' + f(p.m, 2) + ' kg   b = ' + f(p.b, 2) + ' N·s/m   k = ' + f(p.k, 2) + ' N/m' + (zw ? '   (m fixed at 1 in ζ, ωn mode)' : '');
+    var eh = '';
+    eh += row('Eigenvalues of A', roots3(eg));
+    eh += row('Poles of G(s)', roots3(pl));
+    eh += row('Same numbers?', same3(eg, pl) ? '<span class="pass">✓ yes</span>' : '<span class="fail">✗ no</span>');
+    $('m3eig').innerHTML = eh;
+
+    /* chart 7: phase plane */
+    var px = [], pv = [], xmin = 0, xmax = 1, vmin = 0, vmax = 0;
+    for (i = 0; i <= n; i++) {
+      var xx = Y[i], vv = vSecond(z, wn, T[i]); px.push(xx); pv.push(vv);
+      if (xx < xmin) xmin = xx; if (xx > xmax) xmax = xx; if (vv < vmin) vmin = vv; if (vv > vmax) vmax = vv;
+    }
+    var padx = (xmax - xmin) * 0.1 || 0.1, padv = (vmax - vmin) * 0.12 || 0.1;
+    chart($('chart7'), {
+      xr: [xmin - padx, xmax + padx], yr: [vmin - padv, vmax + padv], legend: false,
+      xlabel: 'Displacement x₁ (final value = 1)', ylabel: 'Velocity x₂ = dx₁/dt (1/s)',
+      series: [{ x: px, y: pv, color: BLUE, width: 3 }],
+      guides: [{ x0: xmin - padx, y0: 0, x1: xmax + padx, y1: 0, color: GREY, width: 1.2 }, { x0: 0, y0: vmin - padv, x1: 0, y1: vmax + padv, color: GREY, width: 1.2 }],
+      points: [{ x: 0, y: 0, color: GREEN, shape: 'diamond', label: 'start (0, 0)', dy: 20 }, { x: 1, y: 0, color: ORANGE, label: 'end (1, 0)', dy: 20 }]
+    });
+    $('m3note3').textContent = z < 1 - 1e-9
+      ? 'Spiral: underdamped, so the path swings past the end point (1, 0) and curls back in.'
+      : 'No spiral: ' + (z > 1 + 1e-9 ? 'overdamped' : 'critically damped') + ', so the path goes to (1, 0) without circling it.';
+
+    drawValidation3();
+  }
+
+  /* Predict, then check (Module 3) */
+  var Q3 = [
+    { q: 'You raise ζ from 0.2 to 0.8 and leave ωn alone. What happens to the overshoot?', o: ['It gets bigger', 'It gets smaller', 'It stays the same', 'It becomes 100 %'], a: 1,
+      why: 'More damping means less overshoot. At ζ = 0.2 it is about 52.7 %, at ζ = 0.8 about 1.5 %.', how: 'Drag ζ and watch the orange peak label.' },
+    { q: 'You double ωn and leave ζ alone. What happens?', o: ['Overshoot doubles, peak time stays', 'Overshoot stays, peak time halves', 'Both halve', 'Nothing changes'], a: 1,
+      why: 'Overshoot depends only on ζ. Peak time is π / (ωn·√(1 − ζ²)), so doubling ωn halves it.', how: 'Drag ωn and compare the peak label.' },
+    { q: 'Which case reaches the final value fastest without any overshoot?', o: ['Underdamped ζ = 0.5', 'Critically damped ζ = 1', 'Overdamped ζ = 3', 'They are all the same'], a: 1,
+      why: 'Critical damping is the fastest response that never overshoots. Overdamped is slower because of its slow pole. Underdamped overshoots.', how: 'Tick "Compare all three damping cases".' }
+  ];
+  var q3i = 0;
+  function renderQ3() {
+    var root = $('predict3'), q = Q3[q3i];
+    root.innerHTML = '<p class="kicker">Predict, then check</p><h2>Commit to a guess first</h2><p class="pq"></p><div class="popts"></div>' +
+      '<div class="btns"><button type="button" class="pcheck" disabled>Check my guess</button><button type="button" class="ghost pnext" hidden>Next question</button><span class="count"></span></div><div class="fb" hidden aria-live="polite"></div>';
+    var qs = function (sel) { return root.querySelector(sel); };
+    qs('.pq').textContent = q.q;
+    qs('.popts').innerHTML = q.o.map(function (o, i) { return '<label class="opt"><input type="radio" name="pred3" value="' + i + '"> <span>' + o + '</span></label>'; }).join('');
+    qs('.count').textContent = 'Question ' + (q3i + 1) + ' of ' + Q3.length;
+    qs('.popts').addEventListener('change', function () { qs('.pcheck').disabled = false; });
+    qs('.pcheck').addEventListener('click', function () {
+      var chosen = root.querySelector('input[name="pred3"]:checked'); if (!chosen) return;
+      var pick = parseInt(chosen.value, 10);
+      root.querySelectorAll('.opt').forEach(function (l, i) { l.querySelector('input').disabled = true; if (i === q.a) l.classList.add('good'); else if (i === pick) l.classList.add('bad'); });
+      qs('.fb').innerHTML = (pick === q.a ? '<strong class="ok">Correct.</strong> ' : '<strong class="no">Not quite.</strong> ') + q.why + '<br><em>' + q.how + '</em>';
+      qs('.fb').hidden = false; qs('.pcheck').hidden = true; qs('.pnext').hidden = false;
+    });
+    qs('.pnext').addEventListener('click', function () { q3i = (q3i + 1) % Q3.length; renderQ3(); });
+  }
+
+  function sync3() {
+    var zw = document.querySelector('input[name="m3mode"]:checked').value === 'zw';
+    ['m3z', 'm3w'].forEach(function (id) { $(id).disabled = !zw; });
+    ['m3m', 'm3b', 'm3k'].forEach(function (id) { $(id).disabled = zw; });
+  }
+  function update3() {
+    try { drawModule3(); $('err').hidden = true; }
+    catch (e) { $('err').hidden = false; $('err').textContent = 'Something went wrong in Module 3: ' + e.message; }
+  }
+  function setMode3(mode) { document.querySelector('input[name="m3mode"][value="' + mode + '"]').checked = true; sync3(); }
+  function wire3() {
+    ['m3z', 'm3w', 'm3m', 'm3b', 'm3k'].forEach(function (id) { $(id).addEventListener('input', update3); });
+    document.querySelectorAll('input[name="m3band"]').forEach(function (r) { r.addEventListener('change', update3); });
+    $('m3cmp').addEventListener('change', update3);
+    document.querySelectorAll('input[name="m3mode"]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        if (this.value === 'mbk') {
+          var z = parseFloat($('m3z').value), w = parseFloat($('m3w').value);
+          $('m3m').value = 1; $('m3b').value = (2 * z * w).toFixed(1); $('m3k').value = (w * w).toFixed(1);
+        } else {
+          var m = parseFloat($('m3m').value), b = parseFloat($('m3b').value), k = parseFloat($('m3k').value);
+          $('m3w').value = Math.sqrt(k / m).toFixed(1); $('m3z').value = (b / (2 * Math.sqrt(k * m))).toFixed(2);
+        }
+        sync3(); update3();
+      });
+    });
+    document.querySelectorAll('.m3pre').forEach(function (btn) {
+      btn.addEventListener('click', function () { setMode3('zw'); $('m3z').value = this.getAttribute('data-z'); update3(); });
+    });
+    document.querySelectorAll('.m3chk').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var c = this.getAttribute('data-c');
+        $('m3cmp').checked = false;
+        if (c === '6') { setMode3('mbk'); $('m3m').value = 1; $('m3b').value = 2; $('m3k').value = 4; }
+        else { setMode3('zw'); $('m3z').value = c === '4' ? 0.5 : 1; $('m3w').value = 2; }
+        update3();
+        if (window.innerWidth < 960) $('chart5').parentNode.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    watch($('chart5')); watch($('chart6')); watch($('chart7'));
+    sync3(); renderQ3();
+  }
+
+  function update() {
+    try {
+      var p = read();
+      $('Kv').textContent = f(p.K, 1);
+      $('tauv').textContent = f(p.tau, 1) + ' s';
+      $('Av').textContent = f(p.A, 0) + (p.mode === 'ramp' ? ' per s' : '');
+      $('probev').textContent = f(p.probe, 2) + ' τ = ' + f(p.probe * p.tau, 1) + ' s';
+      $('Alabel').textContent = p.mode === 'step' ? 'A (step size)' : 'R (ramp rate, per s)';
+      drawCharts(p); drawReadouts(p); drawValidation(p);
+      var p2 = read2();
+      drawModule2(p2);
+      drawModule3();
+      $('err').hidden = true;
+    } catch (e) {
+      $('err').hidden = false;
+      $('err').textContent = 'Something went wrong: ' + e.message;
+    }
+  }
+
+  ['K', 'tau', 'A', 'probe'].forEach(function (id) { $(id).addEventListener('input', update); });
+  ['thermo', 'lock'].forEach(function (id) { $(id).addEventListener('change', update); });
+  ['tau2', 'omega'].forEach(function (id) { $(id).addEventListener('input', update); });
+  document.querySelectorAll('input[name="mode"]').forEach(function (r) { r.addEventListener('change', function () { update(); renderQuestion(); }); });
+  watch($('chart1')); watch($('chart2')); watch($('chart3')); watch($('chart4'));
+  renderQuestion();
+  wire3();
+  update();
+})();
+</script>
+
+
+</body></html>
