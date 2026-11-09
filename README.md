@@ -33,12 +33,13 @@ and 95 % at t = 3 tau. The page checks this itself and shows PASS or FAIL.
 Result: PASS
 
 ## Module 2: First-order frequency response
-A first-order sensor dampens high-frequency inputs and introduces a phase lag. The page visualizes how the sensor responds to dynamic sine-wave inputs.
+A first-order sensor dampens high-frequency inputs and introduces a phase lag. The page visualizes how the sensor responds to dynamic sine-wave inputs using the formulas:
+$$M = \frac{1}{\sqrt{1 + (\omega\tau)^2}} \quad \vert \quad \phi = -\tan^{-1}(\omega\tau)$$
 
 You can:
-- Change the time constant tau and input frequency omega.
+- Change the time constant tau ($\tau$) and input frequency $\omega$.
 - View input and output sines on the same plot to visually inspect phase lag and attenuation.
-- See the live Bode plot showing amplitude ratio M across a log scale of frequencies.
+- See the live Bode plot showing amplitude ratio $M$ across a log scale of frequencies.
 - Identify the cutoff frequency at $\omega = 1/\tau$.
 - Compute dynamic error $\delta = M - 1$ live.
 
