@@ -44,8 +44,11 @@ You can:
 - Identify the cutoff frequency at $\omega = 1/\tau$.
 - Compute dynamic error $\delta = M - 1$ live.
 
-### Validation check 2
-The slides specify that for $\tau = 0.2\text{ s}$ and input $\sin(2t)$, the output amplitude is 0.93 of the input with a phase lag of $21.8^\circ$. The page checks this automatically and displays PASS or FAIL.
+### Validation checks 2 and 3
+- **Check 2:** For $\tau = 0.2\text{ s}$ and input $\sin(2t)$, the output amplitude is 0.93 of the input with a phase lag of $21.8^\circ$.
+- **Check 3:** For signals up to 50 Hz with at most 5% dynamic error, $\tau \approx 0.52\text{ ms}$, yielding a phase lag of $9.3^\circ$ at 50 Hz.
+
+The page checks these automatically and displays PASS or FAIL.
 
 Result: PASS
 
