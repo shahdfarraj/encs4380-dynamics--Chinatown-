@@ -13,7 +13,8 @@ It needs no server and no internet connection.
 |---|---|
 | Leen Zuhud | Module 1: First-order time response |
 | Shahd Farraj | Module 2: First-order frequency response |
-| Batoul Abu Samhadana | Module 3: second-order response |
+| Batoul Abu Samhadana | Module 3: Second-order response |
+
 ## Module 1: First-order time response
 A thermometer is slow. It takes time to reach the real temperature.
 The page shows this with a graph.
@@ -47,6 +48,7 @@ You can:
 The slides specify that for $\tau = 0.2\text{ s}$ and input $\sin(2t)$, the output amplitude is 0.93 of the input with a phase lag of $21.8^\circ$. The page checks this automatically and displays PASS or FAIL.
 
 Result: PASS
+
 ## Module 3: Second-order response
 A mass on a spring with a damper (like an accelerometer) does not settle like a thermometer.
 It can swing past the final value and ring, or creep slowly, depending on how much damping it has.
