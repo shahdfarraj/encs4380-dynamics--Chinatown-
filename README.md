@@ -13,8 +13,7 @@ It needs no server and no internet connection.
 |---|---|
 | Leen Zuhud | Module 1: First-order time response |
 | Shahd Farraj | Module 2: First-order frequency response |
-| Batoul Abu Samhadana | Module 3: Second-order response |
-
+| Batoul Abu Samhadana | Module 3: second-order response |
 ## Module 1: First-order time response
 A thermometer is slow. It takes time to reach the real temperature.
 The page shows this with a graph.
@@ -79,16 +78,28 @@ Buttons on the page put the same values on the graphs.
 Result: PASS (all three)
 
 ## Screenshots
+**Module 1: First-order time response**
 **step response**
 <img width="1920" height="1021" alt="image" src="https://github.com/user-attachments/assets/184c9468-9732-4b56-8450-2a47f7a8d845" />
 **ramp response**
 <img width="1920" height="1023" alt="image" src="https://github.com/user-attachments/assets/b0d0f9dd-f9c0-4246-bd1a-944c00f736a0" />
 **log graph**
 <img width="1920" height="1016" alt="image" src="https://github.com/user-attachments/assets/19be6311-cfae-46e9-8169-902a806621a1" />
+
+**Module 2: First-order frequency response**
 **frequency response & Bode plot**
 <img width="1920" height="1016" alt="image" src="screenshot2.png" />
-**check 4,5,6**
-<img width="564" height="293" alt="image" src="https://github.com/user-attachments/assets/53f9789f-6981-4eb3-9966-8631115b28fe" />
+
+**Module 3: second order response**
+**step response**
+<img width="970" height="631" alt="image" src="https://github.com/user-attachments/assets/2a0044ad-a721-4eaf-85f1-7b3f103905dd" />
+**s-plane: poles of G(s) and eigenvalues of A**
+<img width="897" height="551" alt="image" src="https://github.com/user-attachments/assets/2f5356ae-623a-4f91-8f15-caaf6143ee3d" />
+**State-space panel (updates live)**
+<img width="977" height="372" alt="image" src="https://github.com/user-attachments/assets/a1311696-0589-448f-aca9-745f385a4a20" />
+**Phase plane (x₁, x₂) during the step**
+<img width="903" height="536" alt="image" src="https://github.com/user-attachments/assets/1918483c-5e81-4ed2-aabc-8e5bdf301329" />
+
 
 ## Use of AI tools
 We used Claude and ChatGPT to help write the code.
