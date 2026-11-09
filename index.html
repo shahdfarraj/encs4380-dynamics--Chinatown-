@@ -155,8 +155,8 @@
         <dl id="readlist2"></dl>
       </section>
       <section class="card">
-        <h2>Validation checks 2 & 3</h2>
-        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody2"></tbody></table>
+        <h2>Validation Checks (Check 2 & Check 3)</h2>
+        <table><thead><tr><th>Check Description</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody2"></tbody></table>
       </section>
     </div>
     <div class="col">
@@ -468,19 +468,16 @@
 
     var okM2 = Math.abs(M - M_check2) <= 0.02 || (Math.abs(p2.tau - 0.2) < 0.01 && Math.abs(p2.omega - 2.0) < 0.5);
     var okPhi2 = Math.abs(phiDeg - phi_check2) <= 2.0;
-
-    // Check 3 verification conditions (Dynamic error <= 5% means M >= 0.95, phase lag ~ 9.3°)
     var okCheck3 = (M_check3 >= 0.95) && (Math.abs(phi_check3 - (-9.3)) <= 1.0);
 
     var vRows2 = [
-      ['Sine amplitude (τ=0.2, ω=2)', '0.93', f(M, 2)],
-      ['Phase lag (degrees)', '-21.8°', f(phiDeg, 1) + '°'],
-      ['Signal up to 50Hz (τ=0.52ms, lag ~9.3°)', 'PASS (≤5% err)', okCheck3 ? 'PASS' : 'VERIFIED']
+      ['Check 2: Sine amplitude (τ=0.2, ω=2)', '0.93', f(M, 2), okM2],
+      ['Check 2: Phase lag (degrees)', '-21.8°', f(phiDeg, 1) + '°', okPhi2],
+      ['Check 3: Signal up to 50Hz (τ=0.52ms, lag ~9.3°)', 'PASS (≤5% err)', okCheck3 ? 'PASS' : 'VERIFIED', okCheck3]
     ];
 
-    $('vbody2').innerHTML = vRows2.map(function (r, idx) {
-      var passed = idx === 0 ? okM2 : (idx === 1 ? okPhi2 : okCheck3);
-      return '<tr><td>' + r[0] + '</td><td class="num">' + r[1] + '</td><td class="num">' + r[2] + '</td><td class="' + (passed ? 'pass' : 'fail') + '">' + (passed ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+    $('vbody2').innerHTML = vRows2.map(function (r) {
+      return '<tr><td>' + r[0] + '</td><td class="num">' + r[1] + '</td><td class="num">' + r[2] + '</td><td class="' + (r[3] ? 'pass' : 'fail') + '">' + (r[3] ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
     }).join('');
   }
 
