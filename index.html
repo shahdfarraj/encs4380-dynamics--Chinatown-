@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
+<!-- saved from url=(0062)https://shahdfarraj.github.io/encs4380-dynamics-%2DChinatown-/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="ENCS4380 Homework 1, Modules 1 & 2: First-order time and frequency responses.">
+<meta name="description" content="ENCS4380 Homework 1, Modules 1 to 3: first-order time and frequency responses, and the second-order response.">
 <title>ENCS4380 | Dynamic Characteristics Toolkit</title>
 <style>
   :root { --blue:#2563eb; --orange:#ea580c; --red:#dc2626; --green:#15803d; --ink:#111827; --mut:#6b7280; --line:#e5e7eb; --bg:#f6f7f9; }
@@ -71,6 +71,13 @@
   .pass { color: var(--green); font-weight: 700; } .fail { color: var(--red); font-weight: 700; }
   .err { background: #fef2f2; color: var(--red); padding: 12px; border-radius: 8px; margin: 16px 0; }
   hr { border: 0; border-top: 1px solid var(--line); margin: 30px 0; }
+
+  /* Module 3 additions */
+  input[type=range]:disabled { opacity: .35; cursor: not-allowed; }
+  .ctl .lbl { display: block; font-weight: 600; margin-bottom: 4px; }
+  button.mini { padding: 6px 10px; font-size: 13px; }
+  .mat { font: 13.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #f1f5f9; border-radius: 8px; padding: 10px 12px; margin: 6px 0 10px; overflow-x: auto; white-space: pre; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #eff6ff; color: var(--blue); font-weight: 700; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -79,13 +86,13 @@
   <div class="wrap">
     <p class="eyebrow">ENCS4380 Interfacing Techniques · Birzeit University</p>
     <h1>Dynamic Characteristics Toolkit</h1>
-    <p class="sub">Module 1 & 2: First-order time and frequency responses</p>
+    <p class="sub">Modules 1 to 3: First-order time and frequency responses, and the second-order response</p>
   </div>
 </header>
 
 <main class="wrap">
   <noscript><div class="err">This page needs JavaScript. Please enable it and reload.</div></noscript>
-  <div id="err" class="err" hidden></div>
+  <div id="err" class="err" hidden=""></div>
 
   <section class="card intro">
     <h2>A sensor never reports the present</h2>
@@ -96,43 +103,43 @@
 
   <div class="layout">
     <div class="col">
-      <section class="card predict" id="predict" style="--o:1"></section>
+      <section class="card predict" id="predict" style="--o:1"><p class="kicker">Predict, then check</p><h2>Commit to a guess first</h2><p class="pq">A step of size A hits the sensor at t = 0. At t = τ, what fraction of the final change has the output made?</p><div class="popts"><label class="opt"><input type="radio" name="pred" value="0"> <span>37 %</span></label><label class="opt"><input type="radio" name="pred" value="1"> <span>50 %</span></label><label class="opt"><input type="radio" name="pred" value="2"> <span>63 %</span></label><label class="opt"><input type="radio" name="pred" value="3"> <span>95 %</span></label></div><div class="btns"><button type="button" class="pcheck" disabled="">Check my guess</button><button type="button" class="ghost pnext" hidden="">Next question</button><span class="count">Question 1 of 2</span></div><div class="fb" hidden="" aria-live="polite"></div></section>
 
       <section class="card" style="--o:2">
         <h2>Sensor and input (Module 1)</h2>
         <div class="ctl"><div class="seg" role="radiogroup" aria-label="Input type">
-          <label><input type="radio" name="mode" value="step" checked> Step</label>
+          <label><input type="radio" name="mode" value="step" checked=""> Step</label>
           <label><input type="radio" name="mode" value="ramp"> Ramp</label></div></div>
-        <div class="ctl"><label class="t" for="K"><span>K (static gain)</span><output id="Kv"></output></label>
+        <div class="ctl"><label class="t" for="K"><span>K (static gain)</span><output id="Kv">1.0</output></label>
           <input id="K" type="range" min="0.5" max="5" step="0.1" value="1"></div>
-        <div class="ctl"><label class="t" for="tau"><span>τ (time constant, s)</span><output id="tauv"></output></label>
+        <div class="ctl"><label class="t" for="tau"><span>τ (time constant, s)</span><output id="tauv">10.0 s</output></label>
           <input id="tau" type="range" min="1" max="20" step="0.5" value="10"></div>
-        <div class="ctl"><label class="t" for="A"><span id="Alabel">A (step size)</span><output id="Av"></output></label>
+        <div class="ctl"><label class="t" for="A"><span id="Alabel">A (step size)</span><output id="Av">60</output></label>
           <input id="A" type="range" min="1" max="100" step="1" value="60"></div>
-        <div class="ctl"><label class="t" for="probe"><span>Probe time t / τ</span><output id="probev"></output></label>
+        <div class="ctl"><label class="t" for="probe"><span>Probe time t / τ</span><output id="probev">2.00 τ = 20.0 s</output></label>
           <input id="probe" type="range" min="0" max="6" step="0.05" value="2"></div>
         <label class="chk"><input id="thermo" type="checkbox"> <span>Thermometer mode (room air 20 °C)</span></label>
-        <label class="chk"><input id="lock" type="checkbox" checked> <span>Fixed time axis (0 to 80 s)</span></label>
+        <label class="chk"><input id="lock" type="checkbox" checked=""> <span>Fixed time axis (0 to 80 s)</span></label>
       </section>
 
-      <section class="card" style="--o:4"><h2>Live readout</h2><dl id="readlist"></dl></section>
+      <section class="card" style="--o:4"><h2>Live readout</h2><dl id="readlist"><div class="row"><dt>Final value K·A</dt><dd>60.00</dd></div><div class="row"><dt>y(τ) = 63.2 %</dt><dd>37.93</dd></div><div class="row"><dt>y(3τ) = 95.0 %</dt><dd>57.01</dd></div><div class="row"><dt>Probe: y(20.0 s)</dt><dd>51.88 (86.5 %)</dd></div><div class="row"><dt>Measured slope of ln(error)</dt><dd>−0.100 s⁻¹</dd></div><div class="row"><dt>− 1/τ</dt><dd>−0.100 s⁻¹</dd></div></dl></section>
 
       <section class="card" style="--o:6">
         <h2>Validation check 1</h2>
-        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody"></tbody></table>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody"><tr><td>y(τ) = 0.632·K·A</td><td class="num">37.920</td><td class="num">37.927</td><td class="pass">✓ PASS</td></tr><tr><td>y(3τ) = 0.95·K·A</td><td class="num">57.000</td><td class="num">57.013</td><td class="pass">✓ PASS</td></tr></tbody></table>
       </section>
     </div>
 
     <div class="col">
       <section class="card" style="--o:3">
         <h2>Response y(t)</h2>
-        <div id="chart1" class="chart tall"></div>
-        <p class="note" id="note1"></p>
+        <div id="chart1" class="chart tall"><svg width="718" height="400" viewBox="0 0 718 400" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12"><defs><clippath id="clipchart1"><rect x="60" y="14" width="640" height="320"></rect></clippath></defs><rect x="60" y="14" width="640" height="320" fill="#fff"></rect><line x1="60" y1="14" x2="60" y2="334" stroke="#e5e7eb"></line><text x="60" y="350" text-anchor="middle" fill="#6b7280">0</text><line x1="140" y1="14" x2="140" y2="334" stroke="#e5e7eb"></line><text x="140" y="350" text-anchor="middle" fill="#6b7280">10</text><line x1="220" y1="14" x2="220" y2="334" stroke="#e5e7eb"></line><text x="220" y="350" text-anchor="middle" fill="#6b7280">20</text><line x1="300" y1="14" x2="300" y2="334" stroke="#e5e7eb"></line><text x="300" y="350" text-anchor="middle" fill="#6b7280">30</text><line x1="380" y1="14" x2="380" y2="334" stroke="#e5e7eb"></line><text x="380" y="350" text-anchor="middle" fill="#6b7280">40</text><line x1="460" y1="14" x2="460" y2="334" stroke="#e5e7eb"></line><text x="460" y="350" text-anchor="middle" fill="#6b7280">50</text><line x1="540" y1="14" x2="540" y2="334" stroke="#e5e7eb"></line><text x="540" y="350" text-anchor="middle" fill="#6b7280">60</text><line x1="620" y1="14" x2="620" y2="334" stroke="#e5e7eb"></line><text x="620" y="350" text-anchor="middle" fill="#6b7280">70</text><line x1="700" y1="14" x2="700" y2="334" stroke="#e5e7eb"></line><text x="700" y="350" text-anchor="middle" fill="#6b7280">80</text><line x1="60" y1="320.0869565217391" x2="700" y2="320.0869565217391" stroke="#e5e7eb"></line><text x="53" y="324.0869565217391" text-anchor="end" fill="#6b7280">0</text><line x1="60" y1="273.71014492753625" x2="700" y2="273.71014492753625" stroke="#e5e7eb"></line><text x="53" y="277.71014492753625" text-anchor="end" fill="#6b7280">10</text><line x1="60" y1="227.33333333333334" x2="700" y2="227.33333333333334" stroke="#e5e7eb"></line><text x="53" y="231.33333333333334" text-anchor="end" fill="#6b7280">20</text><line x1="60" y1="180.95652173913044" x2="700" y2="180.95652173913044" stroke="#e5e7eb"></line><text x="53" y="184.95652173913044" text-anchor="end" fill="#6b7280">30</text><line x1="60" y1="134.57971014492753" x2="700" y2="134.57971014492753" stroke="#e5e7eb"></line><text x="53" y="138.57971014492753" text-anchor="end" fill="#6b7280">40</text><line x1="60" y1="88.20289855072465" x2="700" y2="88.20289855072465" stroke="#e5e7eb"></line><text x="53" y="92.20289855072465" text-anchor="end" fill="#6b7280">50</text><line x1="60" y1="41.82608695652175" x2="700" y2="41.82608695652175" stroke="#e5e7eb"></line><text x="53" y="45.82608695652175" text-anchor="end" fill="#6b7280">60</text><rect x="60" y="14" width="640" height="320" fill="none" stroke="#9ca3af"></rect><text x="380" y="370" text-anchor="middle" fill="#111827" font-size="13">Time t (s)</text><text transform="translate(14 174) rotate(-90)" text-anchor="middle" fill="#111827" font-size="13">Output y</text><g clip-path="url(#clipchart1)"><line x1="140" y1="320.0869565217391" x2="140" y2="144.1925401520535" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2 4"></line><line x1="60" y1="144.1925401520535" x2="140" y2="144.1925401520535" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2 4"></line><line x1="300" y1="320.0869565217391" x2="300" y2="55.67987989366645" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2 4"></line><line x1="60" y1="55.67987989366645" x2="300" y2="55.67987989366645" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2 4"></line><path d="M60.00,320.09L60.00,41.83L700.00,41.83" fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"></path><path d="M60.00,320.09L61.60,314.58L63.20,309.18L64.80,303.88L66.40,298.69L68.00,293.61L69.60,288.62L71.20,283.73L72.80,278.94L74.40,274.25L76.00,269.65L77.60,265.14L79.20,260.71L80.80,256.38L82.40,252.13L84.00,247.97L85.60,243.88L87.20,239.88L88.80,235.96L90.40,232.12L92.00,228.35L93.60,224.66L95.20,221.04L96.80,217.49L98.40,214.01L100.00,210.60L101.60,207.26L103.20,203.98L104.80,200.77L106.40,197.62L108.00,194.54L109.60,191.51L111.20,188.55L112.80,185.65L114.40,182.80L116.00,180.01L117.60,177.27L119.20,174.59L120.80,171.96L122.40,169.38L124.00,166.86L125.60,164.38L127.20,161.95L128.80,159.58L130.40,157.24L132.00,154.96L133.60,152.72L135.20,150.52L136.80,148.37L138.40,146.26L140.00,144.19L141.60,142.17L143.20,140.18L144.80,138.23L146.40,136.32L148.00,134.45L149.60,132.62L151.20,130.82L152.80,129.06L154.40,127.33L156.00,125.64L157.60,123.98L159.20,122.35L160.80,120.76L162.40,119.19L164.00,117.66L165.60,116.16L167.20,114.69L168.80,113.24L170.40,111.83L172.00,110.44L173.60,109.09L175.20,107.75L176.80,106.45L178.40,105.17L180.00,103.91L181.60,102.69L183.20,101.48L184.80,100.30L186.40,99.14L188.00,98.01L189.60,96.89L191.20,95.80L192.80,94.73L194.40,93.69L196.00,92.66L197.60,91.65L199.20,90.67L200.80,89.70L202.40,88.75L204.00,87.82L205.60,86.91L207.20,86.02L208.80,85.14L210.40,84.29L212.00,83.45L213.60,82.62L215.20,81.81L216.80,81.02L218.40,80.25L220.00,79.48L221.60,78.74L223.20,78.01L224.80,77.29L226.40,76.59L228.00,75.90L229.60,75.23L231.20,74.56L232.80,73.92L234.40,73.28L236.00,72.66L237.60,72.05L239.20,71.45L240.80,70.86L242.40,70.29L244.00,69.72L245.60,69.17L247.20,68.63L248.80,68.10L250.40,67.58L252.00,67.07L253.60,66.57L255.20,66.08L256.80,65.60L258.40,65.13L260.00,64.67L261.60,64.21L263.20,63.77L264.80,63.34L266.40,62.91L268.00,62.49L269.60,62.08L271.20,61.68L272.80,61.29L274.40,60.90L276.00,60.53L277.60,60.16L279.20,59.79L280.80,59.44L282.40,59.09L284.00,58.75L285.60,58.41L287.20,58.08L288.80,57.76L290.40,57.45L292.00,57.14L293.60,56.83L295.20,56.54L296.80,56.25L298.40,55.96L300.00,55.68L301.60,55.41L303.20,55.14L304.80,54.87L306.40,54.61L308.00,54.36L309.60,54.11L311.20,53.87L312.80,53.63L314.40,53.40L316.00,53.17L317.60,52.94L319.20,52.72L320.80,52.51L322.40,52.30L324.00,52.09L325.60,51.89L327.20,51.69L328.80,51.49L330.40,51.30L332.00,51.11L333.60,50.93L335.20,50.75L336.80,50.57L338.40,50.40L340.00,50.23L341.60,50.06L343.20,49.90L344.80,49.74L346.40,49.58L348.00,49.43L349.60,49.28L351.20,49.13L352.80,48.99L354.40,48.84L356.00,48.71L357.60,48.57L359.20,48.44L360.80,48.31L362.40,48.18L364.00,48.05L365.60,47.93L367.20,47.81L368.80,47.69L370.40,47.57L372.00,47.46L373.60,47.35L375.20,47.24L376.80,47.13L378.40,47.03L380.00,46.92L381.60,46.82L383.20,46.72L384.80,46.63L386.40,46.53L388.00,46.44L389.60,46.35L391.20,46.26L392.80,46.17L394.40,46.08L396.00,46.00L397.60,45.92L399.20,45.84L400.80,45.76L402.40,45.68L404.00,45.60L405.60,45.53L407.20,45.45L408.80,45.38L410.40,45.31L412.00,45.24L413.60,45.17L415.20,45.11L416.80,45.04L418.40,44.98L420.00,44.92L421.60,44.86L423.20,44.80L424.80,44.74L426.40,44.68L428.00,44.62L429.60,44.57L431.20,44.51L432.80,44.46L434.40,44.41L436.00,44.36L437.60,44.31L439.20,44.26L440.80,44.21L442.40,44.16L444.00,44.12L445.60,44.07L447.20,44.03L448.80,43.98L450.40,43.94L452.00,43.90L453.60,43.86L455.20,43.82L456.80,43.78L458.40,43.74L460.00,43.70L461.60,43.66L463.20,43.63L464.80,43.59L466.40,43.56L468.00,43.52L469.60,43.49L471.20,43.46L472.80,43.42L474.40,43.39L476.00,43.36L477.60,43.33L479.20,43.30L480.80,43.27L482.40,43.24L484.00,43.22L485.60,43.19L487.20,43.16L488.80,43.13L490.40,43.11L492.00,43.08L493.60,43.06L495.20,43.03L496.80,43.01L498.40,42.99L500.00,42.96L501.60,42.94L503.20,42.92L504.80,42.90L506.40,42.88L508.00,42.86L509.60,42.83L511.20,42.81L512.80,42.80L514.40,42.78L516.00,42.76L517.60,42.74L519.20,42.72L520.80,42.70L522.40,42.69L524.00,42.67L525.60,42.65L527.20,42.64L528.80,42.62L530.40,42.60L532.00,42.59L533.60,42.57L535.20,42.56L536.80,42.54L538.40,42.53L540.00,42.52L541.60,42.50L543.20,42.49L544.80,42.48L546.40,42.46L548.00,42.45L549.60,42.44L551.20,42.43L552.80,42.41L554.40,42.40L556.00,42.39L557.60,42.38L559.20,42.37L560.80,42.36L562.40,42.35L564.00,42.34L565.60,42.33L567.20,42.32L568.80,42.31L570.40,42.30L572.00,42.29L573.60,42.28L575.20,42.27L576.80,42.26L578.40,42.25L580.00,42.24L581.60,42.24L583.20,42.23L584.80,42.22L586.40,42.21L588.00,42.20L589.60,42.20L591.20,42.19L592.80,42.18L594.40,42.18L596.00,42.17L597.60,42.16L599.20,42.16L600.80,42.15L602.40,42.14L604.00,42.14L605.60,42.13L607.20,42.12L608.80,42.12L610.40,42.11L612.00,42.11L613.60,42.10L615.20,42.10L616.80,42.09L618.40,42.08L620.00,42.08L621.60,42.07L623.20,42.07L624.80,42.07L626.40,42.06L628.00,42.06L629.60,42.05L631.20,42.05L632.80,42.04L634.40,42.04L636.00,42.03L637.60,42.03L639.20,42.03L640.80,42.02L642.40,42.02L644.00,42.01L645.60,42.01L647.20,42.01L648.80,42.00L650.40,42.00L652.00,42.00L653.60,41.99L655.20,41.99L656.80,41.99L658.40,41.98L660.00,41.98L661.60,41.98L663.20,41.97L664.80,41.97L666.40,41.97L668.00,41.97L669.60,41.96L671.20,41.96L672.80,41.96L674.40,41.95L676.00,41.95L677.60,41.95L679.20,41.95L680.80,41.94L682.40,41.94L684.00,41.94L685.60,41.94L687.20,41.94L688.80,41.93L690.40,41.93L692.00,41.93L693.60,41.93L695.20,41.93L696.80,41.92L698.40,41.92L700.00,41.92" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="140" cy="144.1925401520535" r="6" fill="#ea580c" stroke="#fff" stroke-width="1.5"></circle><circle cx="300" cy="55.67987989366645" r="6" fill="#ea580c" stroke="#fff" stroke-width="1.5"></circle><polygon points="220,71.48460055279659 228,79.48460055279659 220,87.48460055279659 212,79.48460055279659" fill="#15803d" stroke="#fff" stroke-width="1.5"></polygon></g><text x="151" y="160.1925401520535" text-anchor="start" fill="#ea580c" font-weight="600">63.2 % at τ</text><text x="311" y="71.67987989366645" text-anchor="start" fill="#ea580c" font-weight="600">95 % at 3τ</text><line x1="60" y1="384" x2="84" y2="384" stroke="#9ca3af" stroke-width="3" stroke-dasharray="7 5"></line><text x="90" y="388" fill="#111827">Ideal output K·x(t)</text><line x1="245" y1="384" x2="269" y2="384" stroke="#2563eb" stroke-width="3"></line><text x="275" y="388" fill="#111827">Sensor output y(t)</text><g id="hvchart1" hidden="hidden"><line stroke="#6b7280" stroke-dasharray="3 3"></line><circle r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"></circle><rect rx="6" fill="#111827" opacity=".9"></rect><text fill="#fff"></text></g><rect id="ovchart1" x="60" y="14" width="640" height="320" fill="transparent" style="touch-action:pan-y"></rect></svg></div>
+        <p class="note" id="note1">Orange dots: 63.2 % at t = τ and 95 % at t = 3τ. Hover or tap to read values.</p>
       </section>
       <section class="card" style="--o:5">
         <h2>Error fraction on a log axis</h2>
-        <div id="chart2" class="chart"></div>
-        <p class="note" id="note2"></p>
+        <div id="chart2" class="chart"><svg width="718" height="340" viewBox="0 0 718 340" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12"><defs><clippath id="clipchart2"><rect x="60" y="14" width="640" height="280"></rect></clippath></defs><rect x="60" y="14" width="640" height="280" fill="#fff"></rect><line x1="60" y1="14" x2="60" y2="294" stroke="#e5e7eb"></line><text x="60" y="310" text-anchor="middle" fill="#6b7280">0</text><line x1="140" y1="14" x2="140" y2="294" stroke="#e5e7eb"></line><text x="140" y="310" text-anchor="middle" fill="#6b7280">10</text><line x1="220" y1="14" x2="220" y2="294" stroke="#e5e7eb"></line><text x="220" y="310" text-anchor="middle" fill="#6b7280">20</text><line x1="300" y1="14" x2="300" y2="294" stroke="#e5e7eb"></line><text x="300" y="310" text-anchor="middle" fill="#6b7280">30</text><line x1="380" y1="14" x2="380" y2="294" stroke="#e5e7eb"></line><text x="380" y="310" text-anchor="middle" fill="#6b7280">40</text><line x1="460" y1="14" x2="460" y2="294" stroke="#e5e7eb"></line><text x="460" y="310" text-anchor="middle" fill="#6b7280">50</text><line x1="540" y1="14" x2="540" y2="294" stroke="#e5e7eb"></line><text x="540" y="310" text-anchor="middle" fill="#6b7280">60</text><line x1="620" y1="14" x2="620" y2="294" stroke="#e5e7eb"></line><text x="620" y="310" text-anchor="middle" fill="#6b7280">70</text><line x1="700" y1="14" x2="700" y2="294" stroke="#e5e7eb"></line><text x="700" y="310" text-anchor="middle" fill="#6b7280">80</text><line x1="60" y1="21.200209121107378" x2="700" y2="21.200209121107378" stroke="#e5e7eb"></line><text x="53" y="25.200209121107378" text-anchor="end" fill="#6b7280">1</text><line x1="60" y1="60.67908387960054" x2="700" y2="60.67908387960054" stroke="#e5e7eb"></line><text x="53" y="64.67908387960054" text-anchor="end" fill="#6b7280">0.368</text><line x1="60" y1="112.13347274740494" x2="700" y2="112.13347274740494" stroke="#e5e7eb"></line><text x="53" y="116.13347274740494" text-anchor="end" fill="#6b7280">0.1</text><line x1="60" y1="139.50711270254092" x2="700" y2="139.50711270254092" stroke="#e5e7eb"></line><text x="53" y="143.50711270254092" text-anchor="end" fill="#6b7280">0.05</text><line x1="60" y1="203.06673637370247" x2="700" y2="203.06673637370247" stroke="#e5e7eb"></line><text x="53" y="207.06673637370247" text-anchor="end" fill="#6b7280">0.01</text><line x1="60" y1="294" x2="700" y2="294" stroke="#e5e7eb"></line><text x="53" y="298" text-anchor="end" fill="#6b7280">0.001</text><rect x="60" y="14" width="640" height="280" fill="none" stroke="#9ca3af"></rect><text x="380" y="330" text-anchor="middle" fill="#111827" font-size="13">Time t (s)</text><text transform="translate(14 154) rotate(-90)" text-anchor="middle" fill="#111827" font-size="13">(y_final − y) / y_final</text><g clip-path="url(#clipchart2)"><line x1="140" y1="294" x2="140" y2="60.6920237354621" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2 4"></line><line x1="300" y1="294" x2="300" y2="139.67565296417152" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2 4"></line><path d="M60.00,21.20L61.60,21.99L63.20,22.78L64.80,23.57L66.40,24.36L68.00,25.15L69.60,25.94L71.20,26.73L72.80,27.52L74.40,28.31L76.00,29.10L77.60,29.89L79.20,30.68L80.80,31.47L82.40,32.26L84.00,33.05L85.60,33.84L87.20,34.63L88.80,35.42L90.40,36.21L92.00,37.00L93.60,37.79L95.20,38.58L96.80,39.37L98.40,40.16L100.00,40.95L101.60,41.74L103.20,42.53L104.80,43.32L106.40,44.11L108.00,44.90L109.60,45.69L111.20,46.47L112.80,47.26L114.40,48.05L116.00,48.84L117.60,49.63L119.20,50.42L120.80,51.21L122.40,52.00L124.00,52.79L125.60,53.58L127.20,54.37L128.80,55.16L130.40,55.95L132.00,56.74L133.60,57.53L135.20,58.32L136.80,59.11L138.40,59.90L140.00,60.69L141.60,61.48L143.20,62.27L144.80,63.06L146.40,63.85L148.00,64.64L149.60,65.43L151.20,66.22L152.80,67.01L154.40,67.80L156.00,68.59L157.60,69.38L159.20,70.17L160.80,70.96L162.40,71.75L164.00,72.54L165.60,73.33L167.20,74.12L168.80,74.91L170.40,75.70L172.00,76.49L173.60,77.28L175.20,78.07L176.80,78.86L178.40,79.65L180.00,80.44L181.60,81.23L183.20,82.02L184.80,82.81L186.40,83.60L188.00,84.39L189.60,85.18L191.20,85.97L192.80,86.76L194.40,87.55L196.00,88.34L197.60,89.13L199.20,89.92L200.80,90.71L202.40,91.50L204.00,92.29L205.60,93.08L207.20,93.87L208.80,94.65L210.40,95.44L212.00,96.23L213.60,97.02L215.20,97.81L216.80,98.60L218.40,99.39L220.00,100.18L221.60,100.97L223.20,101.76L224.80,102.55L226.40,103.34L228.00,104.13L229.60,104.92L231.20,105.71L232.80,106.50L234.40,107.29L236.00,108.08L237.60,108.87L239.20,109.66L240.80,110.45L242.40,111.24L244.00,112.03L245.60,112.82L247.20,113.61L248.80,114.40L250.40,115.19L252.00,115.98L253.60,116.77L255.20,117.56L256.80,118.35L258.40,119.14L260.00,119.93L261.60,120.72L263.20,121.51L264.80,122.30L266.40,123.09L268.00,123.88L269.60,124.67L271.20,125.46L272.80,126.25L274.40,127.04L276.00,127.83L277.60,128.62L279.20,129.41L280.80,130.20L282.40,130.99L284.00,131.78L285.60,132.57L287.20,133.36L288.80,134.15L290.40,134.94L292.00,135.73L293.60,136.52L295.20,137.31L296.80,138.10L298.40,138.89L300.00,139.68L301.60,140.47L303.20,141.26L304.80,142.05L306.40,142.83L308.00,143.62L309.60,144.41L311.20,145.20L312.80,145.99L314.40,146.78L316.00,147.57L317.60,148.36L319.20,149.15L320.80,149.94L322.40,150.73L324.00,151.52L325.60,152.31L327.20,153.10L328.80,153.89L330.40,154.68L332.00,155.47L333.60,156.26L335.20,157.05L336.80,157.84L338.40,158.63L340.00,159.42L341.60,160.21L343.20,161.00L344.80,161.79L346.40,162.58L348.00,163.37L349.60,164.16L351.20,164.95L352.80,165.74L354.40,166.53L356.00,167.32L357.60,168.11L359.20,168.90L360.80,169.69L362.40,170.48L364.00,171.27L365.60,172.06L367.20,172.85L368.80,173.64L370.40,174.43L372.00,175.22L373.60,176.01L375.20,176.80L376.80,177.59L378.40,178.38L380.00,179.17L381.60,179.96L383.20,180.75L384.80,181.54L386.40,182.33L388.00,183.12L389.60,183.91L391.20,184.70L392.80,185.49L394.40,186.28L396.00,187.07L397.60,187.86L399.20,188.65L400.80,189.44L402.40,190.23L404.00,191.02L405.60,191.80L407.20,192.59L408.80,193.38L410.40,194.17L412.00,194.96L413.60,195.75L415.20,196.54L416.80,197.33L418.40,198.12L420.00,198.91L421.60,199.70L423.20,200.49L424.80,201.28L426.40,202.07L428.00,202.86L429.60,203.65L431.20,204.44L432.80,205.23L434.40,206.02L436.00,206.81L437.60,207.60L439.20,208.39L440.80,209.18L442.40,209.97L444.00,210.76L445.60,211.55L447.20,212.34L448.80,213.13L450.40,213.92L452.00,214.71L453.60,215.50L455.20,216.29L456.80,217.08L458.40,217.87L460.00,218.66L461.60,219.45L463.20,220.24L464.80,221.03L466.40,221.82L468.00,222.61L469.60,223.40L471.20,224.19L472.80,224.98L474.40,225.77L476.00,226.56L477.60,227.35L479.20,228.14L480.80,228.93L482.40,229.72L484.00,230.51L485.60,231.30L487.20,232.09L488.80,232.88L490.40,233.67L492.00,234.46L493.60,235.25L495.20,236.04L496.80,236.83L498.40,237.62L500.00,238.41L501.60,239.20L503.20,239.98L504.80,240.77L506.40,241.56L508.00,242.35L509.60,243.14L511.20,243.93L512.80,244.72L514.40,245.51L516.00,246.30L517.60,247.09L519.20,247.88L520.80,248.67L522.40,249.46L524.00,250.25L525.60,251.04L527.20,251.83L528.80,252.62L530.40,253.41L532.00,254.20L533.60,254.99L535.20,255.78L536.80,256.57L538.40,257.36L540.00,258.15L541.60,258.94L543.20,259.73L544.80,260.52L546.40,261.31L548.00,262.10L549.60,262.89L551.20,263.68L552.80,264.47L554.40,265.26L556.00,266.05L557.60,266.84L559.20,267.63L560.80,268.42L562.40,269.21L564.00,270.00L565.60,270.79L567.20,271.58L568.80,272.37L570.40,273.16L572.00,273.95L573.60,274.74L575.20,275.53L576.80,276.32L578.40,277.11L580.00,277.90L581.60,278.69L583.20,279.48L584.80,280.27L586.40,281.06L588.00,281.85L589.60,282.64L591.20,283.43L592.80,284.22L594.40,285.01L596.00,285.80L597.60,286.59L599.20,287.38L600.80,288.16L602.40,288.95L604.00,289.74L605.60,290.53L607.20,291.32L608.80,292.11L610.40,292.90L612.00,293.69L613.60,294.48L615.20,295.27L616.80,296.06L618.40,296.85L620.00,297.64L621.60,298.43L623.20,299.22L624.80,300.01L626.40,300.80L628.00,301.59L629.60,302.38L631.20,303.17L632.80,303.96L634.40,304.75L636.00,305.54L637.60,306.33L639.20,307.12L640.80,307.91L642.40,308.70L644.00,309.49L645.60,310.28L647.20,311.07L648.80,311.86L650.40,312.65L652.00,313.44L653.60,314.23L655.20,315.02L656.80,315.81L658.40,316.60L660.00,317.39L661.60,318.18L663.20,318.97L664.80,319.76L666.40,320.55L668.00,321.34L669.60,322.13L671.20,322.92L672.80,323.71L674.40,324.50L676.00,325.29L677.60,326.08L679.20,326.87L680.80,327.66L682.40,328.45L684.00,329.24L685.60,330.03L687.20,330.82L688.80,331.61L690.40,332.40L692.00,333.19L693.60,333.98L695.20,334.77L696.80,335.56L698.40,336.34L700.00,337.13" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="140" cy="60.6920237354621" r="6" fill="#ea580c" stroke="#fff" stroke-width="1.5"></circle><circle cx="300" cy="139.67565296417152" r="6" fill="#ea580c" stroke="#fff" stroke-width="1.5"></circle><polygon points="220,92.1838383498168 228,100.1838383498168 220,108.1838383498168 212,100.1838383498168" fill="#15803d" stroke="#fff" stroke-width="1.5"></polygon></g><text x="151" y="76.6920237354621" text-anchor="start" fill="#ea580c" font-weight="600">e⁻¹ = 0.368 at τ</text><text x="311" y="155.67565296417152" text-anchor="start" fill="#ea580c" font-weight="600">e⁻³ = 0.050 at 3τ</text><g id="hvchart2" hidden="hidden"><line stroke="#6b7280" stroke-dasharray="3 3"></line><circle r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"></circle><rect rx="6" fill="#111827" opacity=".9"></rect><text fill="#fff"></text></g><rect id="ovchart2" x="60" y="14" width="640" height="280" fill="transparent" style="touch-action:pan-y"></rect></svg></div>
+        <p class="note" id="note2">Slope of ln(error) against t is −1/τ = −0.100 s⁻¹.</p>
       </section>
     </div>
   </div>
@@ -148,29 +155,115 @@
     <div class="col">
       <section class="card" style="--o:1">
         <h2>Frequency Controls</h2>
-        <div class="ctl"><label class="t" for="tau2"><span>τ (time constant, s)</span><output id="tau2v"></output></label>
+        <div class="ctl"><label class="t" for="tau2"><span>τ (time constant, s)</span><output id="tau2v">0.20 s</output></label>
           <input id="tau2" type="range" min="0.05" max="2" step="0.05" value="0.2"></div>
-        <div class="ctl"><label class="t" for="omega"><span>Input frequency ω (rad/s)</span><output id="omegav"></output></label>
+        <div class="ctl"><label class="t" for="omega"><span>Input frequency ω (rad/s)</span><output id="omegav">2.1 rad/s</output></label>
           <input id="omega" type="range" min="0.1" max="50" step="0.5" value="2"></div>
       </section>
       <section class="card" style="--o:3">
         <h2>Module 2 Readout</h2>
-        <dl id="readlist2"></dl>
+        <dl id="readlist2"><div class="row"><dt>Amplitude Ratio M</dt><dd>0.922</dd></div><div class="row"><dt>Phase Lag φ</dt><dd>−22.8°</dd></div><div class="row"><dt>Cutoff Frequency (ω = 1/τ)</dt><dd>5.00 rad/s</dd></div><div class="row"><dt>Dynamic Error (δ = M − 1)</dt><dd>−0.078</dd></div></dl>
       </section>
       <section class="card" style="--o:5">
         <h2>Validation check 2</h2>
-        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody2"></tbody></table>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody2"><tr><td>First-order sine amplitude (τ=0.2, ω=2)</td><td class="num">0.93</td><td class="num">0.92</td><td class="pass">✓ PASS</td></tr><tr><td>Phase lag (degrees)</td><td class="num">−21.80</td><td class="num">−22.78</td><td class="pass">✓ PASS</td></tr></tbody></table>
       </section>
     </div>
 
     <div class="col">
       <section class="card" style="--o:2">
-        <h2>Input & Output Sines</h2>
-        <div id="chart3" class="chart"></div>
+        <h2>Input &amp; Output Sines</h2>
+        <div id="chart3" class="chart"><svg width="718" height="340" viewBox="0 0 718 340" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12"><defs><clippath id="clipchart3"><rect x="60" y="14" width="640" height="260"></rect></clippath></defs><rect x="60" y="14" width="640" height="260" fill="#fff"></rect><line x1="60" y1="14" x2="60" y2="274" stroke="#e5e7eb"></line><text x="60" y="290" text-anchor="middle" fill="#6b7280">0</text><line x1="124" y1="14" x2="124" y2="274" stroke="#e5e7eb"></line><text x="124" y="290" text-anchor="middle" fill="#6b7280">1</text><line x1="188" y1="14" x2="188" y2="274" stroke="#e5e7eb"></line><text x="188" y="290" text-anchor="middle" fill="#6b7280">2</text><line x1="252" y1="14" x2="252" y2="274" stroke="#e5e7eb"></line><text x="252" y="290" text-anchor="middle" fill="#6b7280">3</text><line x1="316" y1="14" x2="316" y2="274" stroke="#e5e7eb"></line><text x="316" y="290" text-anchor="middle" fill="#6b7280">4</text><line x1="380" y1="14" x2="380" y2="274" stroke="#e5e7eb"></line><text x="380" y="290" text-anchor="middle" fill="#6b7280">5</text><line x1="444" y1="14" x2="444" y2="274" stroke="#e5e7eb"></line><text x="444" y="290" text-anchor="middle" fill="#6b7280">6</text><line x1="508" y1="14" x2="508" y2="274" stroke="#e5e7eb"></line><text x="508" y="290" text-anchor="middle" fill="#6b7280">7</text><line x1="572" y1="14" x2="572" y2="274" stroke="#e5e7eb"></line><text x="572" y="290" text-anchor="middle" fill="#6b7280">8</text><line x1="636" y1="14" x2="636" y2="274" stroke="#e5e7eb"></line><text x="636" y="290" text-anchor="middle" fill="#6b7280">9</text><line x1="700" y1="14" x2="700" y2="274" stroke="#e5e7eb"></line><text x="700" y="290" text-anchor="middle" fill="#6b7280">10</text><line x1="60" y1="252.33333333333334" x2="700" y2="252.33333333333334" stroke="#e5e7eb"></line><text x="53" y="256.33333333333337" text-anchor="end" fill="#6b7280">−1</text><line x1="60" y1="198.16666666666666" x2="700" y2="198.16666666666666" stroke="#e5e7eb"></line><text x="53" y="202.16666666666666" text-anchor="end" fill="#6b7280">−0.5</text><line x1="60" y1="144" x2="700" y2="144" stroke="#e5e7eb"></line><text x="53" y="148" text-anchor="end" fill="#6b7280">0</text><line x1="60" y1="89.83333333333331" x2="700" y2="89.83333333333331" stroke="#e5e7eb"></line><text x="53" y="93.83333333333331" text-anchor="end" fill="#6b7280">0.5</text><line x1="60" y1="35.66666666666666" x2="700" y2="35.66666666666666" stroke="#e5e7eb"></line><text x="53" y="39.66666666666666" text-anchor="end" fill="#6b7280">1</text><rect x="60" y="14" width="640" height="260" fill="none" stroke="#9ca3af"></rect><text x="380" y="310" text-anchor="middle" fill="#111827" font-size="13">Time t (s)</text><text transform="translate(14 144) rotate(-90)" text-anchor="middle" fill="#111827" font-size="13">Amplitude</text><g clip-path="url(#clipchart3)"><path d="M60.00,144.00L62.13,136.42L64.27,128.88L66.40,121.42L68.53,114.06L70.67,106.85L72.80,99.83L74.93,93.02L77.07,86.45L79.20,80.18L81.33,74.21L83.47,68.59L85.60,63.33L87.73,58.47L89.87,54.03L92.00,50.03L94.13,46.49L96.27,43.43L98.40,40.86L100.53,38.79L102.67,37.24L104.80,36.22L106.93,35.72L109.07,35.75L111.20,36.31L113.33,37.40L115.47,39.01L117.60,41.14L119.73,43.77L121.87,46.89L124.00,50.49L126.13,54.54L128.27,59.03L130.40,63.94L132.53,69.24L134.67,74.91L136.80,80.91L138.93,87.23L141.07,93.82L143.20,100.66L145.33,107.71L147.47,114.94L149.60,122.31L151.73,129.79L153.87,137.33L156.00,144.91L158.13,152.49L160.27,160.02L162.40,167.47L164.53,174.81L166.67,182.00L168.80,189.00L170.93,195.79L173.07,202.31L175.20,208.56L177.33,214.48L179.47,220.07L181.60,225.27L183.73,230.09L185.87,234.47L188.00,238.42L190.13,241.90L192.27,244.91L194.40,247.42L196.53,249.42L198.67,250.91L200.80,251.87L202.93,252.31L205.07,252.21L207.20,251.58L209.33,250.43L211.47,248.76L213.60,246.57L215.73,243.88L217.87,240.70L220.00,237.05L222.13,232.94L224.27,228.40L226.40,223.44L228.53,218.10L230.67,212.39L232.80,206.34L234.93,199.99L237.07,193.37L239.20,186.50L241.33,179.43L243.47,172.18L245.60,164.80L247.73,157.31L249.87,149.76L252.00,142.18L254.13,134.61L256.27,127.08L258.40,119.64L260.53,112.32L262.67,105.15L264.80,98.17L266.93,91.42L269.07,84.92L271.20,78.71L273.33,72.83L275.47,67.29L277.60,62.13L279.73,57.36L281.87,53.03L284.00,49.14L286.13,45.71L288.27,42.76L290.40,40.31L292.53,38.37L294.67,36.95L296.80,36.05L298.93,35.68L301.07,35.84L303.20,36.53L305.33,37.74L307.47,39.48L309.60,41.73L311.73,44.47L313.87,47.71L316.00,51.42L318.13,55.58L320.27,60.17L322.40,65.18L324.53,70.57L326.67,76.32L328.80,82.40L330.93,88.79L333.07,95.44L335.20,102.33L337.33,109.43L339.47,116.70L341.60,124.10L343.73,131.59L345.87,139.15L348.00,146.73L350.13,154.30L352.27,161.82L354.40,169.25L356.53,176.55L358.67,183.70L360.80,190.65L362.93,197.38L365.07,203.84L367.20,210.01L369.33,215.86L371.47,221.35L373.60,226.47L375.73,231.18L377.87,235.46L380.00,239.30L382.13,242.67L384.27,245.56L386.40,247.95L388.53,249.83L390.67,251.19L392.80,252.02L394.93,252.33L397.07,252.11L399.20,251.36L401.33,250.08L403.47,248.28L405.60,245.97L407.73,243.16L409.87,239.87L412.00,236.11L414.13,231.89L416.27,227.25L418.40,222.19L420.53,216.76L422.67,210.96L424.80,204.84L426.93,198.43L429.07,191.74L431.20,184.82L433.33,177.70L435.47,170.42L437.60,163.01L439.73,155.50L441.87,147.94L444.00,140.36L446.13,132.79L448.27,125.28L450.40,117.87L452.53,110.58L454.67,103.45L456.80,96.53L458.93,89.83L461.07,83.40L463.20,77.27L465.33,71.46L467.47,66.01L469.60,60.94L471.73,56.28L473.87,52.05L476.00,48.27L478.13,44.96L480.27,42.13L482.40,39.80L484.53,37.98L486.67,36.68L488.80,35.91L490.93,35.67L493.07,35.95L495.20,36.77L497.33,38.11L499.47,39.97L501.60,42.34L503.73,45.21L505.87,48.56L508.00,52.38L510.13,56.64L512.27,61.34L514.40,66.44L516.53,71.92L518.67,77.75L520.80,83.91L522.93,90.36L525.07,97.08L527.20,104.02L529.33,111.16L531.47,118.46L533.60,125.89L535.73,133.40L537.87,140.97L540.00,148.55L542.13,156.11L544.27,163.61L546.40,171.02L548.53,178.29L550.67,185.39L552.80,192.29L554.93,198.96L557.07,205.35L559.20,211.45L561.33,217.21L563.47,222.62L565.60,227.64L567.73,232.25L569.87,236.43L572.00,240.15L574.13,243.41L576.27,246.18L578.40,248.44L580.53,250.20L582.67,251.44L584.80,252.15L586.93,252.33L589.07,251.98L591.20,251.10L593.33,249.69L595.47,247.77L597.60,245.34L599.73,242.42L601.87,239.01L604.00,235.13L606.13,230.81L608.27,226.07L610.40,220.92L612.53,215.40L614.67,209.52L616.80,203.33L618.93,196.84L621.07,190.10L623.20,183.13L625.33,175.97L627.47,168.65L629.60,161.21L631.73,153.69L633.87,146.12L636.00,138.54L638.13,130.98L640.27,123.49L642.40,116.10L644.53,108.85L646.67,101.77L648.80,94.89L650.93,88.26L653.07,81.90L655.20,75.84L657.33,70.12L659.47,64.76L661.60,59.79L663.73,55.23L665.87,51.10L668.00,47.43L670.13,44.23L672.27,41.52L674.40,39.32L676.53,37.62L678.67,36.45L680.80,35.80L682.93,35.69L685.07,36.10L687.20,37.04L689.33,38.51L691.47,40.49L693.60,42.98L695.73,45.97L697.87,49.43L700.00,53.36" fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="5 5" stroke-linejoin="round" stroke-linecap="round"></path><path d="M60.00,182.68L62.13,176.14L64.27,169.45L66.40,162.63L68.53,155.72L70.67,148.76L72.80,141.77L74.93,134.79L77.07,127.85L79.20,121.00L81.33,114.26L83.47,107.66L85.60,101.24L87.73,95.03L89.87,89.06L92.00,83.36L94.13,77.96L96.27,72.88L98.40,68.15L100.53,63.79L102.67,59.82L104.80,56.27L106.93,53.15L109.07,50.47L111.20,48.24L113.33,46.49L115.47,45.22L117.60,44.43L119.73,44.12L121.87,44.31L124.00,44.98L126.13,46.14L128.27,47.78L130.40,49.89L132.53,52.46L134.67,55.48L136.80,58.93L138.93,62.80L141.07,67.07L143.20,71.71L145.33,76.71L147.47,82.04L149.60,87.67L151.73,93.57L153.87,99.73L156.00,106.10L158.13,112.65L160.27,119.36L162.40,126.19L164.53,133.11L166.67,140.08L168.80,147.07L170.93,154.05L173.07,160.97L175.20,167.82L177.33,174.54L179.47,181.12L181.60,187.52L183.73,193.70L185.87,199.63L188.00,205.30L190.13,210.67L192.27,215.70L194.40,220.39L196.53,224.71L198.67,228.62L200.80,232.13L202.93,235.20L205.07,237.83L207.20,239.99L209.33,241.69L211.47,242.90L213.60,243.64L215.73,243.88L217.87,243.64L220.00,242.90L222.13,241.69L224.27,239.99L226.40,237.83L228.53,235.20L230.67,232.13L232.80,228.63L234.93,224.71L237.07,220.39L239.20,215.71L241.33,210.67L243.47,205.30L245.60,199.64L247.73,193.70L249.87,187.52L252.00,181.12L254.13,174.55L256.27,167.82L258.40,160.98L260.53,154.05L262.67,147.08L264.80,140.09L266.93,133.12L269.07,126.20L271.20,119.37L273.33,112.66L275.47,106.10L277.60,99.73L279.73,93.58L281.87,87.67L284.00,82.04L286.13,76.71L288.27,71.71L290.40,67.07L292.53,62.80L294.67,58.93L296.80,55.48L298.93,52.46L301.07,49.89L303.20,47.78L305.33,46.14L307.47,44.98L309.60,44.31L311.73,44.12L313.87,44.43L316.00,45.22L318.13,46.49L320.27,48.24L322.40,50.46L324.53,53.14L326.67,56.27L328.80,59.82L330.93,63.79L333.07,68.15L335.20,72.88L337.33,77.96L339.47,83.36L341.60,89.06L343.73,95.03L345.87,101.24L348.00,107.66L350.13,114.25L352.27,121.00L354.40,127.85L356.53,134.78L358.67,141.76L360.80,148.75L362.93,155.72L365.07,162.63L367.20,169.45L369.33,176.14L371.47,182.67L373.60,189.02L375.73,195.15L377.87,201.02L380.00,206.62L382.13,211.91L384.27,216.86L386.40,221.46L388.53,225.68L390.67,229.50L392.80,232.91L394.93,235.87L397.07,238.39L399.20,240.44L401.33,242.02L403.47,243.12L405.60,243.74L407.73,243.87L409.87,243.51L412.00,242.66L414.13,241.32L416.27,239.51L418.40,237.24L420.53,234.50L422.67,231.33L424.80,227.72L426.93,223.71L429.07,219.30L431.20,214.53L433.33,209.41L435.47,203.97L437.60,198.24L439.73,192.24L441.87,186.00L444.00,179.56L446.13,172.94L448.27,166.19L450.40,159.32L452.53,152.38L454.67,145.40L456.80,138.41L458.93,131.45L461.07,124.55L463.20,117.74L465.33,111.07L467.47,104.55L469.60,98.23L471.73,92.13L473.87,86.29L476.00,80.73L478.13,75.48L480.27,70.56L482.40,66.01L484.53,61.84L486.67,58.06L488.80,54.71L490.93,51.80L493.07,49.34L495.20,47.34L497.33,45.82L499.47,44.78L501.60,44.22L503.73,44.15L505.87,44.57L508.00,45.48L510.13,46.87L512.27,48.73L514.40,51.07L516.53,53.85L518.67,57.08L520.80,60.74L522.93,64.80L525.07,69.25L527.20,74.07L529.33,79.23L531.47,84.71L533.60,90.47L535.73,96.50L537.87,102.76L540.00,109.23L542.13,115.86L544.27,122.63L546.40,129.51L548.53,136.46L550.67,143.44L552.80,150.43L554.93,157.38L557.07,164.27L559.20,171.07L561.33,177.72L563.47,184.22L565.60,190.51L567.73,196.58L569.87,202.39L572.00,207.92L574.13,213.13L576.27,218.00L578.40,222.51L580.53,226.64L582.67,230.36L584.80,233.66L586.93,236.52L589.07,238.92L591.20,240.86L593.33,242.33L595.47,243.32L597.60,243.82L599.73,243.82L601.87,243.35L604.00,242.38L606.13,240.93L608.27,239.01L610.40,236.62L612.53,233.78L614.67,230.50L616.80,226.79L618.93,222.68L621.07,218.19L623.20,213.33L625.33,208.13L627.47,202.62L629.60,196.82L631.73,190.76L633.87,184.47L636.00,177.98L638.13,171.33L640.27,164.55L642.40,157.66L644.53,150.71L646.67,143.72L648.80,136.73L650.93,129.78L653.07,122.90L655.20,116.13L657.33,109.49L659.47,103.02L661.60,96.75L663.73,90.71L665.87,84.93L668.00,79.44L670.13,74.27L672.27,69.44L674.40,64.97L676.53,60.89L678.67,57.22L680.80,53.97L682.93,51.17L685.07,48.82L687.20,46.93L689.33,45.52L691.47,44.60L693.60,44.16L695.73,44.21L697.87,44.74L700.00,45.77" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path></g><line x1="60" y1="324" x2="84" y2="324" stroke="#9ca3af" stroke-width="3" stroke-dasharray="5 5"></line><text x="90" y="328" fill="#111827">Input sin(ωt)</text><line x1="203" y1="324" x2="227" y2="324" stroke="#2563eb" stroke-width="3"></line><text x="233" y="328" fill="#111827">Output y(t)</text><g id="hvchart3" hidden="hidden"><line stroke="#6b7280" stroke-dasharray="3 3"></line><circle r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"></circle><rect rx="6" fill="#111827" opacity=".9"></rect><text fill="#fff"></text></g><rect id="ovchart3" x="60" y="14" width="640" height="260" fill="transparent" style="touch-action:pan-y"></rect></svg></div>
       </section>
       <section class="card" style="--o:4">
         <h2>Bode Plot (Magnitude Ratio M)</h2>
-        <div id="chart4" class="chart"></div>
+        <div id="chart4" class="chart"><svg width="718" height="340" viewBox="0 0 718 340" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="12"><defs><clippath id="clipchart4"><rect x="60" y="14" width="640" height="260"></rect></clippath></defs><rect x="60" y="14" width="640" height="260" fill="#fff"></rect><line x1="186.97394789579158" y1="14" x2="186.97394789579158" y2="274" stroke="#e5e7eb"></line><text x="186.97394789579158" y="290" text-anchor="middle" fill="#6b7280">10</text><line x1="315.2304609218437" y1="14" x2="315.2304609218437" y2="274" stroke="#e5e7eb"></line><text x="315.2304609218437" y="290" text-anchor="middle" fill="#6b7280">20</text><line x1="443.4869739478958" y1="14" x2="443.4869739478958" y2="274" stroke="#e5e7eb"></line><text x="443.4869739478958" y="290" text-anchor="middle" fill="#6b7280">30</text><line x1="571.7434869739479" y1="14" x2="571.7434869739479" y2="274" stroke="#e5e7eb"></line><text x="571.7434869739479" y="290" text-anchor="middle" fill="#6b7280">40</text><line x1="700" y1="14" x2="700" y2="274" stroke="#e5e7eb"></line><text x="700" y="290" text-anchor="middle" fill="#6b7280">50</text><line x1="60" y1="274" x2="700" y2="274" stroke="#e5e7eb"></line><text x="53" y="278" text-anchor="end" fill="#6b7280">0</text><line x1="60" y1="224.47619047619048" x2="700" y2="224.47619047619048" stroke="#e5e7eb"></line><text x="53" y="228.47619047619048" text-anchor="end" fill="#6b7280">0.2</text><line x1="60" y1="174.95238095238096" x2="700" y2="174.95238095238096" stroke="#e5e7eb"></line><text x="53" y="178.95238095238096" text-anchor="end" fill="#6b7280">0.4</text><line x1="60" y1="125.42857142857144" x2="700" y2="125.42857142857144" stroke="#e5e7eb"></line><text x="53" y="129.42857142857144" text-anchor="end" fill="#6b7280">0.6</text><line x1="60" y1="75.90476190476193" x2="700" y2="75.90476190476193" stroke="#e5e7eb"></line><text x="53" y="79.90476190476193" text-anchor="end" fill="#6b7280">0.8</text><line x1="60" y1="26.380952380952408" x2="700" y2="26.380952380952408" stroke="#e5e7eb"></line><text x="53" y="30.380952380952408" text-anchor="end" fill="#6b7280">1</text><rect x="60" y="14" width="640" height="260" fill="none" stroke="#9ca3af"></rect><text x="380" y="310" text-anchor="middle" fill="#111827" font-size="13">Frequency ω (rad/s)</text><text transform="translate(14 144) rotate(-90)" text-anchor="middle" fill="#111827" font-size="13">Magnitude M</text><g clip-path="url(#clipchart4)"><path d="M60.00,26.43L66.41,28.14L72.83,32.16L79.24,38.16L85.65,45.70L92.06,54.31L98.48,63.55L104.89,73.05L111.30,82.52L117.72,91.77L124.13,100.65L130.54,109.08L136.95,117.03L143.37,124.47L149.78,131.43L156.19,137.90L162.61,143.93L169.02,149.54L175.43,154.76L181.84,159.62L188.26,164.14L194.67,168.36L201.08,172.30L207.49,175.99L213.91,179.43L220.32,182.67L226.73,185.70L233.15,188.56L239.56,191.24L245.97,193.77L252.38,196.16L258.80,198.42L265.21,200.56L271.62,202.59L278.04,204.51L284.45,206.33L290.86,208.07L297.27,209.72L303.69,211.29L310.10,212.79L316.51,214.22L322.93,215.59L329.34,216.90L335.75,218.16L342.16,219.36L348.58,220.51L354.99,221.62L361.40,222.68L367.82,223.70L374.23,224.68L380.64,225.62L387.05,226.53L393.47,227.41L399.88,228.26L406.29,229.07L412.71,229.86L419.12,230.62L425.53,231.36L431.94,232.07L438.36,232.76L444.77,233.42L451.18,234.07L457.60,234.69L464.01,235.30L470.42,235.89L476.83,236.46L483.25,237.01L489.66,237.55L496.07,238.08L502.48,238.58L508.90,239.08L515.31,239.56L521.72,240.03L528.14,240.48L534.55,240.93L540.96,241.36L547.37,241.78L553.79,242.19L560.20,242.59L566.61,242.98L573.03,243.36L579.44,243.73L585.85,244.10L592.26,244.45L598.68,244.80L605.09,245.13L611.50,245.47L617.92,245.79L624.33,246.10L630.74,246.41L637.15,246.71L643.57,247.01L649.98,247.30L656.39,247.58L662.81,247.86L669.22,248.13L675.63,248.40L682.04,248.66L688.46,248.91L694.87,249.16" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="85.65130260521042" cy="45.69966908770104" r="6" fill="#ea580c" stroke="#fff" stroke-width="1.5"></circle></g><text x="96.65130260521042" y="61.69966908770104" text-anchor="start" fill="#ea580c" font-weight="600">Current ω</text><line x1="60" y1="324" x2="84" y2="324" stroke="#2563eb" stroke-width="3"></line><text x="90" y="328" fill="#111827">Magnitude M(ω)</text><g id="hvchart4" hidden="hidden"><line stroke="#6b7280" stroke-dasharray="3 3"></line><circle r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"></circle><rect rx="6" fill="#111827" opacity=".9"></rect><text fill="#fff"></text></g><rect id="ovchart4" x="60" y="14" width="640" height="260" fill="transparent" style="touch-action:pan-y"></rect></svg></div>
+      </section>
+    </div>
+  </div>
+
+  <hr>
+
+  <section class="card intro" id="module3">
+    <h2>Module 3: Second-Order Response (accelerometer, mass-spring-damper)</h2>
+    <p>A mass on a spring with a damper does not settle like a thermometer. It can overshoot and ring, or creep slowly, depending on how much damping it has.</p>
+    <div class="eq">G(s) = K·ωn² / (s² + 2ζωn·s + ωn²) &nbsp;&nbsp;⇔&nbsp;&nbsp; m·x″ + b·x′ + k·x = F(t)</div>
+    <div class="eq">ωn = √(k/m) &nbsp;|&nbsp; ζ = b / (2√(k·m)) &nbsp;|&nbsp; overshoot = 100·e<sup>−πζ/√(1−ζ²)</sup> % &nbsp;|&nbsp; peak time = π / (ωn·√(1−ζ²))</div>
+  </section>
+
+  <div class="layout">
+    <div class="col">
+      <section class="card" style="--o:1">
+        <h2>Second-order controls</h2>
+        <div class="ctl"><div class="seg" role="radiogroup" aria-label="Choose parameters">
+          <label><input type="radio" name="m3mode" value="zw" checked> ζ and ωn</label>
+          <label><input type="radio" name="m3mode" value="mbk"> m, b, k</label></div></div>
+        <div class="ctl"><label class="t" for="m3z"><span>ζ (damping ratio)</span><output id="m3zv">0.50</output></label>
+          <input id="m3z" type="range" min="0.05" max="3" step="0.05" value="0.5"></div>
+        <div class="ctl"><label class="t" for="m3w"><span>ωn (natural frequency, rad/s)</span><output id="m3wv">2.00 rad/s</output></label>
+          <input id="m3w" type="range" min="0.5" max="10" step="0.1" value="2"></div>
+        <div class="ctl"><label class="t" for="m3m"><span>m (mass, kg)</span><output id="m3mv">1.0</output></label>
+          <input id="m3m" type="range" min="0.1" max="5" step="0.1" value="1" disabled></div>
+        <div class="ctl"><label class="t" for="m3b"><span>b (damper, N·s/m)</span><output id="m3bv">2.0</output></label>
+          <input id="m3b" type="range" min="0.1" max="10" step="0.1" value="2" disabled></div>
+        <div class="ctl"><label class="t" for="m3k"><span>k (spring, N/m)</span><output id="m3kv">4.0</output></label>
+          <input id="m3k" type="range" min="0.5" max="20" step="0.1" value="4" disabled></div>
+        <div class="ctl"><span class="lbl">Quick damping cases</span>
+          <div class="btns">
+            <button type="button" class="ghost mini m3pre" data-z="0.5">Underdamped ζ = 0.5</button>
+            <button type="button" class="ghost mini m3pre" data-z="1">Critical ζ = 1</button>
+            <button type="button" class="ghost mini m3pre" data-z="2">Overdamped ζ = 2</button>
+          </div></div>
+        <div class="ctl"><span class="lbl">Settling band</span><div class="seg" role="radiogroup" aria-label="Settling band">
+          <label><input type="radio" name="m3band" value="0.02" checked> ± 2 %</label>
+          <label><input type="radio" name="m3band" value="0.05"> ± 5 %</label></div></div>
+        <label class="chk"><input id="m3cmp" type="checkbox"> <span>Compare all three damping cases (same ωn)</span></label>
+      </section>
+
+      <section class="card" style="--o:3">
+        <h2>Module 3 readout</h2>
+        <dl id="readlist3"></dl>
+        <table style="margin-top:10px"><thead><tr><th>Measure</th><th>Read off the curve</th><th>Formula</th></tr></thead><tbody id="m3body"></tbody></table>
+        <p class="note" id="m3formnote"></p>
+      </section>
+
+      <section class="card predict" id="predict3" style="--o:4"></section>
+
+      <section class="card" style="--o:8">
+        <h2>Validation checks 4, 5 and 6</h2>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody3"></tbody></table>
+        <p class="note">These rows are computed from fixed test values, so they never change when you move the sliders. Use the buttons to put the same values on the graphs and take a screenshot.</p>
+        <div class="btns">
+          <button type="button" class="ghost mini m3chk" data-c="4">Show check 4 on graphs</button>
+          <button type="button" class="ghost mini m3chk" data-c="5">Show check 5 on graphs</button>
+          <button type="button" class="ghost mini m3chk" data-c="6">Show check 6 on graphs</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card" style="--o:2">
+        <h2>Step response y(t)</h2>
+        <div id="chart5" class="chart tall"></div>
+        <p class="note" id="m3note1"></p>
+      </section>
+
+      <section class="card" style="--o:5">
+        <h2>s-plane: poles of G(s) and eigenvalues of A</h2>
+        <div id="chart6" class="chart"></div>
+        <p class="note">× = poles of G(s). ○ = eigenvalues of A. They land on the same points. The dashed circle has radius ωn.</p>
+      </section>
+
+      <section class="card" style="--o:6">
+        <h2>State-space panel (updates live)</h2>
+        <pre class="mat" id="m3ss"></pre>
+        <dl id="m3eig"></dl>
+      </section>
+
+      <section class="card" style="--o:7">
+        <h2>Phase plane (x₁, x₂) during the step</h2>
+        <div id="chart7" class="chart"></div>
+        <p class="note" id="m3note3"></p>
       </section>
     </div>
   </div>
@@ -217,6 +310,7 @@
     items.forEach(function (it) { if (cx + it.w > W - 10 && cx > 60) { rows++; cx = 60; } it.row = rows - 1; it.x = cx; cx += it.w; });
     var m = { l: 60, r: 18, t: 14, b: o.legend === false ? 46 : 46 + rows * 20 };
     var pw = W - m.l - m.r, ph = H - m.t - m.b;
+    if (o.prep) { var pr = o.prep(pw, ph); o.xr = pr.xr; o.yr = pr.yr; }
     var x0 = o.xr[0], x1 = o.xr[1], y0 = o.yr[0], y1 = o.yr[1];
     var fy = o.ylog ? function (v) { return Math.log10(Math.max(v, 1e-300)); } : function (v) { return v; };
     var sx = function (v) { return m.l + (v - x0) / (x1 - x0) * pw; };
@@ -257,9 +351,15 @@
     });
     (o.points || []).forEach(function (p) {
       var x = sx(p.x), y = sy(p.y);
-      s += p.shape === 'diamond'
-        ? '<polygon points="' + x + ',' + (y - 8) + ' ' + (x + 8) + ',' + y + ' ' + x + ',' + (y + 8) + ' ' + (x - 8) + ',' + y + '" fill="' + p.color + '" stroke="#fff" stroke-width="1.5"/>'
-        : '<circle cx="' + x + '" cy="' + y + '" r="6" fill="' + p.color + '" stroke="#fff" stroke-width="1.5"/>';
+      if (p.shape === 'diamond') {
+        s += '<polygon points="' + x + ',' + (y - 8) + ' ' + (x + 8) + ',' + y + ' ' + x + ',' + (y + 8) + ' ' + (x - 8) + ',' + y + '" fill="' + p.color + '" stroke="#fff" stroke-width="1.5"/>';
+      } else if (p.shape === 'cross') {
+        s += '<path d="M' + (x - 7) + ',' + (y - 7) + 'L' + (x + 7) + ',' + (y + 7) + 'M' + (x - 7) + ',' + (y + 7) + 'L' + (x + 7) + ',' + (y - 7) + '" stroke="' + p.color + '" stroke-width="3.5" stroke-linecap="round" fill="none"/>';
+      } else if (p.shape === 'ring') {
+        s += '<circle cx="' + x + '" cy="' + y + '" r="10" fill="none" stroke="' + p.color + '" stroke-width="2.5"/>';
+      } else {
+        s += '<circle cx="' + x + '" cy="' + y + '" r="6" fill="' + p.color + '" stroke="#fff" stroke-width="1.5"/>';
+      }
     });
     s += '</g>';
 
@@ -508,6 +608,311 @@
     qs('.pnext').addEventListener('click', function () { qi[mode] = (qi[mode] + 1) % list.length; renderQuestion(); });
   }
 
+  /* ===== M3 MODEL START ===== */
+  // Unit-step response of G(s) = wn^2 / (s^2 + 2 z wn s + wn^2), final value 1.
+  function ySecond(z, wn, t) {
+    if (t <= 0) return 0;
+    if (z < 1 - 1e-9) {
+      var s = z * wn, wd = wn * Math.sqrt(1 - z * z);
+      return 1 - Math.exp(-s * t) * (Math.cos(wd * t) + (s / wd) * Math.sin(wd * t));
+    }
+    if (z <= 1 + 1e-9) return 1 - (1 + wn * t) * Math.exp(-wn * t);
+    var r = Math.sqrt(z * z - 1), s1 = -wn / (z + r), s2 = -wn * (z + r);
+    return 1 + (s2 * Math.exp(s1 * t) - s1 * Math.exp(s2 * t)) / (s1 - s2);
+  }
+  // Its time derivative dy/dt (this is the velocity x2 in the phase plane).
+  function vSecond(z, wn, t) {
+    if (t <= 0) return 0;
+    if (z < 1 - 1e-9) {
+      var wd = wn * Math.sqrt(1 - z * z);
+      return (wn * wn / wd) * Math.exp(-z * wn * t) * Math.sin(wd * t);
+    }
+    if (z <= 1 + 1e-9) return wn * wn * t * Math.exp(-wn * t);
+    var r = Math.sqrt(z * z - 1), s1 = -wn / (z + r), s2 = -wn * (z + r);
+    return (s1 * s2 / (s1 - s2)) * (Math.exp(s1 * t) - Math.exp(s2 * t));
+  }
+  // Roots of s^2 + 2 z wn s + wn^2 (the poles of G(s)).
+  function poles3(z, wn) {
+    if (z < 1) { var im = wn * Math.sqrt(1 - z * z); return [{ re: -z * wn, im: im }, { re: -z * wn, im: -im }]; }
+    var r = Math.sqrt(z * z - 1);
+    return [{ re: -wn / (z + r), im: 0 }, { re: -wn * (z + r), im: 0 }];
+  }
+  // Eigenvalues of A = [[0,1],[-k/m,-b/m]] from its trace and determinant.
+  function eig3(m, b, k) {
+    var tr = -b / m, det = k / m, d = tr * tr - 4 * det;
+    if (d < 0) { var im = Math.sqrt(-d) / 2; return [{ re: tr / 2, im: im }, { re: tr / 2, im: -im }]; }
+    var q = Math.sqrt(d);
+    return [{ re: (tr + q) / 2, im: 0 }, { re: (tr - q) / 2, im: 0 }];
+  }
+  // Rate at which the slowest part of the response dies away.
+  function slowRate(z, wn) { return z < 1 ? z * wn : wn / (z + Math.sqrt(z * z - 1)); }
+
+  // Reads rise time, peak, overshoot and settling time off the sampled curve.
+  function measure3(z, wn, band) {
+    var sig = slowRate(z, wn);
+    var tshow = Math.min(120, Math.max(2, 6 / sig)), tmeas = Math.min(600, Math.max(tshow, 12 / sig));
+    var N = 12000, dt = tmeas / N, y = new Array(N + 1), i;
+    for (i = 0; i <= N; i++) y[i] = ySecond(z, wn, i * dt);
+    function cross(level) {
+      for (var j = 1; j <= N; j++) {
+        if (y[j - 1] < level && y[j] >= level) return (j - 1) * dt + (level - y[j - 1]) / (y[j] - y[j - 1]) * dt;
+      }
+      return null;
+    }
+    var t10 = cross(0.1), t90 = cross(0.9), pk = null, p = -1;
+    for (i = 1; i < N; i++) { if (y[i] > y[i - 1] && y[i] >= y[i + 1]) { p = i; break; } }
+    if (p > 0 && y[p] > 1 + 1e-9) {
+      var best = y[p], bt = p * dt, a = (p - 1) * dt, c = (p + 1) * dt, k, tt, yy;
+      for (k = 0; k <= 2000; k++) { tt = a + (c - a) * k / 2000; yy = ySecond(z, wn, tt); if (yy > best) { best = yy; bt = tt; } }
+      pk = { t: bt, y: best };
+    }
+    var last = -1, ts = null;
+    for (i = N; i >= 0; i--) { if (Math.abs(y[i] - 1) > band) { last = i; break; } }
+    if (last >= 0 && last < N) {
+      var lvl = y[last] > 1 ? 1 + band : 1 - band;
+      ts = last * dt + (lvl - y[last]) / (y[last + 1] - y[last]) * dt;
+    }
+    return {
+      sig: sig, tshow: tshow, tmeas: tmeas, t10: t10, t90: t90,
+      tr: (t10 !== null && t90 !== null) ? t90 - t10 : null,
+      pk: pk, os: pk ? 100 * (pk.y - 1) : 0, ts: ts
+    };
+  }
+  // Textbook formulas (only meaningful for the underdamped case).
+  function theory3(z, wn, band) {
+    if (z >= 1) return { os: null, tp: null, ts: null };
+    return {
+      os: 100 * Math.exp(-Math.PI * z / Math.sqrt(1 - z * z)),
+      tp: Math.PI / (wn * Math.sqrt(1 - z * z)),
+      ts: (band === 0.02 ? 4 : 3) / (z * wn)
+    };
+  }
+  function damping3(z) { return z < 1 - 1e-9 ? 'Underdamped' : (z > 1 + 1e-9 ? 'Overdamped' : 'Critically damped'); }
+  /* ===== M3 MODEL END ===== */
+
+  /* ===== Module 3 interface ===== */
+  var PURPLE = '#7c3aed';
+
+  function read3() {
+    var mode = document.querySelector('input[name="m3mode"]:checked').value, z, wn, m, b, k;
+    if (mode === 'zw') { z = parseFloat($('m3z').value); wn = parseFloat($('m3w').value); m = 1; k = wn * wn; b = 2 * z * wn; }
+    else { m = parseFloat($('m3m').value); b = parseFloat($('m3b').value); k = parseFloat($('m3k').value); wn = Math.sqrt(k / m); z = b / (2 * Math.sqrt(k * m)); }
+    return { mode: mode, z: z, wn: wn, m: m, b: b, k: k, band: parseFloat(document.querySelector('input[name="m3band"]:checked').value), cmp: $('m3cmp').checked };
+  }
+  function pct(b) { return f(b * 100, 0) + ' %'; }
+  function roots3(r) {
+    if (Math.abs(r[0].im) < 1e-9) return f(r[0].re, 3) + ',  ' + f(r[1].re, 3);
+    return f(r[0].re, 3) + ' ± j' + f(Math.abs(r[0].im), 3);
+  }
+  function same3(a, b) {
+    for (var i = 0; i < 2; i++) {
+      if (Math.abs(a[i].re - b[i].re) > 1e-6 * (1 + Math.abs(a[i].re))) return false;
+      if (Math.abs(a[i].im - b[i].im) > 1e-6 * (1 + Math.abs(a[i].im))) return false;
+    }
+    return true;
+  }
+  function padL(s, n) { while (s.length < n) s = ' ' + s; return s; }
+
+  var V3 = null;   // fixed test values for checks 4, 5, 6 (never depend on the sliders)
+  function drawValidation3() {
+    if (!V3) {
+      var c4 = measure3(0.5, 2, 0.02), c5 = measure3(1, 2, 0.02), e = eig3(1, 2, 4), pl = poles3(2 / (2 * Math.sqrt(4 * 1)), Math.sqrt(4 / 1));
+      V3 = { os4: c4.os, os5: c5.os, e: e, pl: pl };
+    }
+    var rows = [], ok;
+    function add(label, exp, got, tol, d) { ok = Math.abs(got - exp) <= tol; rows.push([label, exp, got, ok, d]); }
+    add('ζ = 0.5: overshoot (%)', 16.3, V3.os4, 0.05, 2);
+    rows.push(['ζ = 1: overshoot (%), must be zero', 0, V3.os5, V3.os5 < 1e-6, 3]);
+    add('m=1, b=2, k=4: eigenvalues of A, real part', -1, V3.e[0].re, 0.001, 3);
+    add('Eigenvalues of A, imaginary part (±j)', 1.732, Math.abs(V3.e[0].im), 0.001, 3);
+    add('Poles of G(s), real part (same numbers)', -1, V3.pl[0].re, 0.001, 3);
+    add('Poles of G(s), imaginary part (±j)', 1.732, Math.abs(V3.pl[0].im), 0.001, 3);
+    $('vbody3').innerHTML = rows.map(function (r, idx) {
+      var tag = idx === 0 ? 'Check 4. ' : idx === 1 ? 'Check 5. ' : idx === 2 ? 'Check 6. ' : '';
+      return '<tr><td>' + tag + r[0] + '</td><td class="num">' + f(r[1], r[4]) + '</td><td class="num">' + f(r[2], r[4]) + '</td><td class="' + (r[3] ? 'pass' : 'fail') + '">' + (r[3] ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+    }).join('');
+  }
+
+  function drawModule3() {
+    var p = read3(), z = p.z, wn = p.wn, mm = measure3(z, wn, p.band), th = theory3(z, wn, p.band), zw = p.mode === 'zw';
+    var pl = poles3(z, wn), eg = eig3(p.m, p.b, p.k), i;
+
+    $('m3zv').textContent = f(z, 2); $('m3wv').textContent = f(wn, 2) + ' rad/s';
+    $('m3mv').textContent = f(p.m, 1); $('m3bv').textContent = f(p.b, 1); $('m3kv').textContent = f(p.k, 1);
+
+    /* readout */
+    var rd = '';
+    rd += row('Damping case', '<span class="tag">' + damping3(z) + '</span>');
+    rd += row('ζ and ωn', f(z, 3) + ' and ' + f(wn, 3) + ' rad/s');
+    if (z < 1) rd += row('Damped frequency ωd', f(wn * Math.sqrt(1 - z * z), 3) + ' rad/s');
+    rd += row('Poles of G(s)', roots3(pl));
+    $('readlist3').innerHTML = rd;
+
+    var bp = pct(p.band);
+    $('m3body').innerHTML =
+      '<tr><td>Rise time (10 % → 90 %)</td><td class="num">' + (mm.tr === null ? '—' : f(mm.tr, 2) + ' s') + '</td><td class="num">—</td></tr>' +
+      '<tr><td>Peak time</td><td class="num">' + (mm.pk ? f(mm.pk.t, 2) + ' s' : 'no peak') + '</td><td class="num">' + (th.tp === null ? '—' : f(th.tp, 2) + ' s') + '</td></tr>' +
+      '<tr><td>Overshoot</td><td class="num">' + f(mm.os, 2) + ' %</td><td class="num">' + (th.os === null ? '0 %' : f(th.os, 2) + ' %') + '</td></tr>' +
+      '<tr><td>Settling time (' + bp + ')</td><td class="num">' + (mm.ts === null ? 'not settled' : f(mm.ts, 2) + ' s') + '</td><td class="num">' + (th.ts === null ? '—' : '≈ ' + f(th.ts, 2) + ' s') + '</td></tr>';
+    $('m3formnote').textContent = 'Left value: measured on the plotted curve. Right value: textbook formula (peak time, overshoot and the ' + (p.band === 0.02 ? '4' : '3') + '/(ζωn) settling estimate apply to the underdamped case).';
+
+    /* chart 5: step response */
+    var n = 600, T = [], Y = [], ymax = 1, tshow = mm.tshow, v;
+    for (i = 0; i <= n; i++) { v = i * tshow / n; T.push(v); Y.push(ySecond(z, wn, v)); if (Y[i] > ymax) ymax = Y[i]; }
+    var series = [{ x: [0, tshow], y: [1, 1], color: GREY, width: 2, dash: '7 5' }];
+    if (p.cmp) {
+      [[0.5, 'ζ = 0.5 underdamped', PURPLE], [1, 'ζ = 1 critical', GREEN], [2, 'ζ = 2 overdamped', ORANGE]].forEach(function (c) {
+        var yy = []; for (var j = 0; j <= n; j++) { yy.push(ySecond(c[0], wn, T[j])); if (yy[j] > ymax) ymax = yy[j]; }
+        series.push({ x: T, y: yy, color: c[2], width: 2, name: c[1] });
+      });
+    }
+    series.push({ x: T, y: Y, color: BLUE, width: p.cmp ? 3 : 3, dash: p.cmp ? '2 5' : null, name: p.cmp ? 'Current: ζ = ' + f(z, 2) + ' (dotted)' : 'Step response y(t)' });
+    var points = [], guides = [], lo1 = 1 - p.band, hi1 = 1 + p.band;
+    guides.push({ x0: 0, y0: hi1, x1: tshow, y1: hi1, color: GREY, dash: '2 4' }, { x0: 0, y0: lo1, x1: tshow, y1: lo1, color: GREY, dash: '2 4' });
+    if (mm.t10 !== null && mm.t10 <= tshow) points.push({ x: mm.t10, y: 0.1, color: GREEN, shape: 'diamond' });
+    if (mm.t90 !== null && mm.t90 <= tshow) points.push({ x: mm.t90, y: 0.9, color: GREEN, shape: 'diamond', label: 'Tr = ' + f(mm.tr, 2) + ' s' });
+    if (mm.pk && mm.pk.t <= tshow) points.push({ x: mm.pk.t, y: mm.pk.y, color: ORANGE, label: 'Peak ' + f(mm.os, 1) + ' % at ' + f(mm.pk.t, 2) + ' s', dy: -12 });
+    if (mm.ts !== null && mm.ts <= tshow * 0.97) {
+      var yts = ySecond(z, wn, mm.ts);
+      guides.push({ x0: mm.ts, y0: -0.05, x1: mm.ts, y1: yts, color: RED, dash: '2 4' });
+      points.push({ x: mm.ts, y: yts, color: RED, label: 'Ts = ' + f(mm.ts, 2) + ' s' });
+    }
+    chart($('chart5'), {
+      xr: [0, tshow], yr: [-0.05, Math.max(1.15, ymax * 1.08)], xlabel: 'Time t (s)', ylabel: 'Output y (final value = 1)',
+      series: series, guides: guides, points: points,
+      hover: function (x) { var yy = ySecond(z, wn, x); return { y: yy, text: 't = ' + f(x, 2) + ' s   y = ' + f(yy, 3) }; }
+    });
+    $('m3note1').textContent = 'Green diamonds: 10 % and 90 % points (rise time). Orange dot: first peak. Red dot: settling time, the last moment the curve leaves the ± ' + bp + ' band. Hover or tap to read values.';
+
+    /* chart 6: s-plane */
+    var maxRe = Math.max(Math.abs(pl[0].re), Math.abs(pl[1].re)), maxIm = Math.max(Math.abs(pl[0].im), Math.abs(pl[1].im));
+    var circ = { x: [], y: [], color: GREY, width: 1.5, dash: '5 5' };
+    for (i = 0; i <= 120; i++) { var a = 2 * Math.PI * i / 120; circ.x.push(wn * Math.cos(a)); circ.y.push(wn * Math.sin(a)); }
+    var sg = [{ x0: -1e4, y0: 0, x1: 1e4, y1: 0, color: GREY, width: 1.2 }, { x0: 0, y0: -1e4, x1: 0, y1: 1e4, color: GREY, width: 1.2 }];
+    var sp = [];
+    pl.forEach(function (q, idx) {
+      var lbl = null;
+      if (z < 1) { if (idx === 0) lbl = f(q.re, 2) + ' ± j' + f(q.im, 2); }
+      else lbl = f(q.re, 2);
+      sp.push({ x: q.re, y: q.im, color: BLUE, shape: 'cross', label: lbl, dy: -14 });
+      if (z < 1) sg.push({ x0: 0, y0: 0, x1: q.re, y1: q.im, color: ORANGE, width: 1.5, dash: '4 4' });
+    });
+    eg.forEach(function (q) { sp.push({ x: q.re, y: q.im, color: ORANGE, shape: 'ring' }); });
+    chart($('chart6'), {
+      xr: [-1, 1], yr: [-1, 1], legend: false, xlabel: 'Real part (1/s)', ylabel: 'Imaginary part (rad/s)',
+      prep: function (pw, ph) {
+        var ratio = pw / ph, R = Math.max(maxIm * 1.35, maxRe * 1.05 / ratio, wn * 1.15, 0.5), hw = R * ratio;
+        return { xr: [-1.1 * hw, 0.9 * hw], yr: [-R, R] };
+      },
+      series: [circ], guides: sg, points: sp
+    });
+
+    /* state-space panel */
+    var a21 = -p.k / p.m, a22 = -p.b / p.m, w = 8;
+    $('m3ss').textContent =
+      'A = [ ' + padL(f(0, 2), w) + padL(f(1, 2), w) + ' ]      B = [ ' + padL(f(0, 2), w) + ' ]\n' +
+      '    [ ' + padL(f(a21, 2), w) + padL(f(a22, 2), w) + ' ]          [ ' + padL(f(1 / p.m, 2), w) + ' ]\n' +
+      'x = [x₁, x₂] = [displacement, velocity]      y = [1  0]·x\n' +
+      'm = ' + f(p.m, 2) + ' kg   b = ' + f(p.b, 2) + ' N·s/m   k = ' + f(p.k, 2) + ' N/m' + (zw ? '   (m fixed at 1 in ζ, ωn mode)' : '');
+    var eh = '';
+    eh += row('Eigenvalues of A', roots3(eg));
+    eh += row('Poles of G(s)', roots3(pl));
+    eh += row('Same numbers?', same3(eg, pl) ? '<span class="pass">✓ yes</span>' : '<span class="fail">✗ no</span>');
+    $('m3eig').innerHTML = eh;
+
+    /* chart 7: phase plane */
+    var px = [], pv = [], xmin = 0, xmax = 1, vmin = 0, vmax = 0;
+    for (i = 0; i <= n; i++) {
+      var xx = Y[i], vv = vSecond(z, wn, T[i]); px.push(xx); pv.push(vv);
+      if (xx < xmin) xmin = xx; if (xx > xmax) xmax = xx; if (vv < vmin) vmin = vv; if (vv > vmax) vmax = vv;
+    }
+    var padx = (xmax - xmin) * 0.1 || 0.1, padv = (vmax - vmin) * 0.12 || 0.1;
+    chart($('chart7'), {
+      xr: [xmin - padx, xmax + padx], yr: [vmin - padv, vmax + padv], legend: false,
+      xlabel: 'Displacement x₁ (final value = 1)', ylabel: 'Velocity x₂ = dx₁/dt (1/s)',
+      series: [{ x: px, y: pv, color: BLUE, width: 3 }],
+      guides: [{ x0: xmin - padx, y0: 0, x1: xmax + padx, y1: 0, color: GREY, width: 1.2 }, { x0: 0, y0: vmin - padv, x1: 0, y1: vmax + padv, color: GREY, width: 1.2 }],
+      points: [{ x: 0, y: 0, color: GREEN, shape: 'diamond', label: 'start (0, 0)', dy: 20 }, { x: 1, y: 0, color: ORANGE, label: 'end (1, 0)', dy: 20 }]
+    });
+    $('m3note3').textContent = z < 1 - 1e-9
+      ? 'Spiral: underdamped, so the path swings past the end point (1, 0) and curls back in.'
+      : 'No spiral: ' + (z > 1 + 1e-9 ? 'overdamped' : 'critically damped') + ', so the path goes to (1, 0) without circling it.';
+
+    drawValidation3();
+  }
+
+  /* Predict, then check (Module 3) */
+  var Q3 = [
+    { q: 'You raise ζ from 0.2 to 0.8 and leave ωn alone. What happens to the overshoot?', o: ['It gets bigger', 'It gets smaller', 'It stays the same', 'It becomes 100 %'], a: 1,
+      why: 'More damping means less overshoot. At ζ = 0.2 it is about 52.7 %, at ζ = 0.8 about 1.5 %.', how: 'Drag ζ and watch the orange peak label.' },
+    { q: 'You double ωn and leave ζ alone. What happens?', o: ['Overshoot doubles, peak time stays', 'Overshoot stays, peak time halves', 'Both halve', 'Nothing changes'], a: 1,
+      why: 'Overshoot depends only on ζ. Peak time is π / (ωn·√(1 − ζ²)), so doubling ωn halves it.', how: 'Drag ωn and compare the peak label.' },
+    { q: 'Which case reaches the final value fastest without any overshoot?', o: ['Underdamped ζ = 0.5', 'Critically damped ζ = 1', 'Overdamped ζ = 3', 'They are all the same'], a: 1,
+      why: 'Critical damping is the fastest response that never overshoots. Overdamped is slower because of its slow pole. Underdamped overshoots.', how: 'Tick "Compare all three damping cases".' }
+  ];
+  var q3i = 0;
+  function renderQ3() {
+    var root = $('predict3'), q = Q3[q3i];
+    root.innerHTML = '<p class="kicker">Predict, then check</p><h2>Commit to a guess first</h2><p class="pq"></p><div class="popts"></div>' +
+      '<div class="btns"><button type="button" class="pcheck" disabled>Check my guess</button><button type="button" class="ghost pnext" hidden>Next question</button><span class="count"></span></div><div class="fb" hidden aria-live="polite"></div>';
+    var qs = function (sel) { return root.querySelector(sel); };
+    qs('.pq').textContent = q.q;
+    qs('.popts').innerHTML = q.o.map(function (o, i) { return '<label class="opt"><input type="radio" name="pred3" value="' + i + '"> <span>' + o + '</span></label>'; }).join('');
+    qs('.count').textContent = 'Question ' + (q3i + 1) + ' of ' + Q3.length;
+    qs('.popts').addEventListener('change', function () { qs('.pcheck').disabled = false; });
+    qs('.pcheck').addEventListener('click', function () {
+      var chosen = root.querySelector('input[name="pred3"]:checked'); if (!chosen) return;
+      var pick = parseInt(chosen.value, 10);
+      root.querySelectorAll('.opt').forEach(function (l, i) { l.querySelector('input').disabled = true; if (i === q.a) l.classList.add('good'); else if (i === pick) l.classList.add('bad'); });
+      qs('.fb').innerHTML = (pick === q.a ? '<strong class="ok">Correct.</strong> ' : '<strong class="no">Not quite.</strong> ') + q.why + '<br><em>' + q.how + '</em>';
+      qs('.fb').hidden = false; qs('.pcheck').hidden = true; qs('.pnext').hidden = false;
+    });
+    qs('.pnext').addEventListener('click', function () { q3i = (q3i + 1) % Q3.length; renderQ3(); });
+  }
+
+  function sync3() {
+    var zw = document.querySelector('input[name="m3mode"]:checked').value === 'zw';
+    ['m3z', 'm3w'].forEach(function (id) { $(id).disabled = !zw; });
+    ['m3m', 'm3b', 'm3k'].forEach(function (id) { $(id).disabled = zw; });
+  }
+  function update3() {
+    try { drawModule3(); $('err').hidden = true; }
+    catch (e) { $('err').hidden = false; $('err').textContent = 'Something went wrong in Module 3: ' + e.message; }
+  }
+  function setMode3(mode) { document.querySelector('input[name="m3mode"][value="' + mode + '"]').checked = true; sync3(); }
+  function wire3() {
+    ['m3z', 'm3w', 'm3m', 'm3b', 'm3k'].forEach(function (id) { $(id).addEventListener('input', update3); });
+    document.querySelectorAll('input[name="m3band"]').forEach(function (r) { r.addEventListener('change', update3); });
+    $('m3cmp').addEventListener('change', update3);
+    document.querySelectorAll('input[name="m3mode"]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        if (this.value === 'mbk') {
+          var z = parseFloat($('m3z').value), w = parseFloat($('m3w').value);
+          $('m3m').value = 1; $('m3b').value = (2 * z * w).toFixed(1); $('m3k').value = (w * w).toFixed(1);
+        } else {
+          var m = parseFloat($('m3m').value), b = parseFloat($('m3b').value), k = parseFloat($('m3k').value);
+          $('m3w').value = Math.sqrt(k / m).toFixed(1); $('m3z').value = (b / (2 * Math.sqrt(k * m))).toFixed(2);
+        }
+        sync3(); update3();
+      });
+    });
+    document.querySelectorAll('.m3pre').forEach(function (btn) {
+      btn.addEventListener('click', function () { setMode3('zw'); $('m3z').value = this.getAttribute('data-z'); update3(); });
+    });
+    document.querySelectorAll('.m3chk').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var c = this.getAttribute('data-c');
+        $('m3cmp').checked = false;
+        if (c === '6') { setMode3('mbk'); $('m3m').value = 1; $('m3b').value = 2; $('m3k').value = 4; }
+        else { setMode3('zw'); $('m3z').value = c === '4' ? 0.5 : 1; $('m3w').value = 2; }
+        update3();
+        if (window.innerWidth < 960) $('chart5').parentNode.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    watch($('chart5')); watch($('chart6')); watch($('chart7'));
+    sync3(); renderQ3();
+  }
+
   function update() {
     try {
       var p = read();
@@ -519,6 +924,7 @@
       drawCharts(p); drawReadouts(p); drawValidation(p);
       var p2 = read2();
       drawModule2(p2);
+      drawModule3();
       $('err').hidden = true;
     } catch (e) {
       $('err').hidden = false;
@@ -532,8 +938,10 @@
   document.querySelectorAll('input[name="mode"]').forEach(function (r) { r.addEventListener('change', function () { update(); renderQuestion(); }); });
   watch($('chart1')); watch($('chart2')); watch($('chart3')); watch($('chart4'));
   renderQuestion();
+  wire3();
   update();
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
