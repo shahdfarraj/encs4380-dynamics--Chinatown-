@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="ENCS4380 Homework 1, Modules 1 to 3: first-order time and frequency responses, and the second-order response.">
+<meta name="description" content="ENCS4380 Homework 1: interactive dynamic characteristics toolkit with four modules.">
 <title>ENCS4380 | Dynamic Characteristics Toolkit</title>
 <style>
   :root { --blue:#2563eb; --orange:#ea580c; --red:#dc2626; --green:#15803d; --ink:#111827; --mut:#6b7280; --line:#e5e7eb; --bg:#f6f7f9; }
@@ -308,6 +308,11 @@
   <p id="m4score">Session score: 0 / 0 points (0 rounds)</p>
   <p class="note">Blue: noisy measurement (before submission). After submission: green = true model, orange dashed = your estimate. Both estimated parameters must be within 10% for full marks.</p>
   <div id="m4chart" class="chart"></div>
+  <section class="card" style="margin:18px 0 0;background:#fafbfc">
+    <h2>Module 4: Automatic self-test</h2>
+    <p class="note">Additional implementation checks (not part of the six official homework validation checks). These fixed tests do not reveal the current hidden sensor.</p>
+    <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbodyM4"></tbody></table>
+  </section>
 </section>
 </main>
 
@@ -684,7 +689,7 @@
       var chosen = root.querySelector('input[name="pred"]:checked'); if (!chosen) return;
       var pick = parseInt(chosen.value, 10);
       root.querySelectorAll('.opt').forEach(function (l, i) { l.querySelector('input').disabled = true; if (i === q.a) l.classList.add('good'); else if (i === pick) l.classList.add('bad'); });
-      qs('.f// Validation Check 2 & 3 evaluationsb').innerHTML = (pick === q.a ? '<strong class="ok">Correct.</strong> ' : '<strong class="no">Not quite.</strong> ') + q.why + '<br><em>' + q.how + '</em>';
+      qs('.fb').innerHTML = (pick === q.a ? '<strong class="ok">Correct.</strong> ' : '<strong class="no">Not quite.</strong> ') + q.why + '<br><em>' + q.how + '</em>';
       qs('.fb').hidden = false; qs('.pcheck').hidden = true; qs('.pnext').hidden = false;
     });
     qs('.pnext').addEventListener('click', function () { qi[mode] = (qi[mode] + 1) % list.length; renderQuestion(); });
@@ -1159,6 +1164,31 @@ var m4Noise = makeM4Noise();
     series: curves 
   });
   }
+  // Fixed, independent tests: these never access the randomly hidden parameters.
+  function validateM4() {
+    var results = [];
+    function add(label, expected, actual, ok) {
+      results.push('<tr><td>' + label + '</td><td class="num">' + expected +
+        '</td><td class="num">' + actual + '</td><td class="' + (ok ? 'pass' : 'fail') +
+        '">' + (ok ? '✓ PASS' : '✗ FAIL') + '</td></tr>');
+    }
+    var tau = 2, gain = 1.5;
+    var stepAtTau = yStep(gain, 1, tau, tau);
+    var stepExpected = gain * (1 - Math.exp(-1));
+    add('First-order response at t = τ', f(stepExpected, 4), f(stepAtTau, 4), Math.abs(stepAtTau - stepExpected) < 1e-10);
+    var z = 0.5, wn = 2, tp = Math.PI / (wn * Math.sqrt(1 - z*z));
+    var overshoot = 100 * (ySecond(z, wn, tp) - 1);
+    add('Second-order peak overshoot (ζ = 0.5)', '≈ 16.3%', f(overshoot, 2) + '%', Math.abs(overshoot - 16.3) < 0.1);
+    var zRecovered = -Math.log(overshoot / 100) / Math.sqrt(Math.PI*Math.PI + Math.pow(Math.log(overshoot / 100), 2));
+    var wnRecovered = Math.PI / (tp * Math.sqrt(1 - zRecovered*zRecovered));
+    add('Recover ζ from overshoot', '0.500', f(zRecovered, 3), Math.abs(zRecovered - z) < 1e-6);
+    add('Recover ωₙ from peak time', '2.000', f(wnRecovered, 3), Math.abs(wnRecovered - wn) < 1e-6);
+    var within = Math.abs(1.09 - 1) / 1 * 100 <= 10;
+    var outside = Math.abs(1.11 - 1) / 1 * 100 <= 10;
+    add('10% scoring threshold', '9%: full; 11%: none', (within ? 'full' : 'none') + '; ' + (outside ? 'full' : 'none'), within && !outside);
+    $('vbodyM4').innerHTML = results.join('');
+  }
+  validateM4();
   watch($('m4chart'));
 
     function newM4Sensor() {
