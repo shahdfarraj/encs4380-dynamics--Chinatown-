@@ -14,6 +14,8 @@ It needs no server and no internet connection.
 | Leen Zuhud | Module 1: First-order time response |
 | Shahd Farraj | Module 2: First-order frequency response |
 | Batoul Abu Samhadana | Module 3: second-order response |
+| Laila Bahjat | Module 4: Guess the Sensor Challenge |
+
 ## Module 1: First-order time response
 A thermometer is slow. It takes time to reach the real temperature.
 The page shows this with a graph.
@@ -283,11 +285,25 @@ Pull Request: #5
 
 **Module 4: Guess the Sensor Challenge**
 
-Screenshots to add:
-- Noisy first-order or second-order sensor response.
-- Parameter estimation and feedback after submitting a guess.
-- Actual-versus-estimated response overlay.
-- Automatic self-tests showing PASS.
+
+**Hidden sensor response**
+
+<img width="910" height="630" alt="image" src="https://github.com/user-attachments/assets/e9a4d624-c264-4e49-9658-4c87857c787a" />
+
+**Parameter estimation and feedback**
+
+<img width="764" height="598" alt="image" src="https://github.com/user-attachments/assets/e1a04aec-43b6-46c3-b2bb-999538282a8a" />
+
+<img width="759" height="543" alt="image" src="https://github.com/user-attachments/assets/4c20ab2a-cd31-456b-85b2-bdd7fa903d88" />
+
+<img width="761" height="564" alt="image" src="https://github.com/user-attachments/assets/5fe2637f-f5b8-4892-b98b-501f579c8c00" />
+
+**Actual vs. estimated response**
+<img width="761" height="564" alt="image" src="https://github.com/user-attachments/assets/92a23a71-8f18-4652-af51-e89e2b421fa4" />
+
+**Automatic self-tests**
+
+<img width="767" height="440" alt="image" src="https://github.com/user-attachments/assets/ec0146ef-dd91-4545-bbd8-02944132219d" />
 
 ## Use of AI tools
 
