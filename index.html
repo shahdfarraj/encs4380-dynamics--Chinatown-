@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="ENCS4380 Homework 1, Modules 1 to 3: first-order time and frequency responses, and the second-order response.">
+<meta name="description" content="ENCS4380 Homework 1: interactive dynamic characteristics toolkit with four modules.">
 <title>ENCS4380 | Dynamic Characteristics Toolkit</title>
 <style>
   :root { --blue:#2563eb; --orange:#ea580c; --red:#dc2626; --green:#15803d; --ink:#111827; --mut:#6b7280; --line:#e5e7eb; --bg:#f6f7f9; }
@@ -79,7 +79,7 @@
   <div class="wrap">
     <p class="eyebrow">ENCS4380 Interfacing Techniques · Birzeit University</p>
     <h1>Dynamic Characteristics Toolkit</h1>
-    <p class="sub">Modules 1 to 3: First-order time and frequency responses, and the second-order response</p>
+    <p class="sub">Modules 1–4: Sensor responses and parameter estimation</p>
   </div>
 </header>
 
@@ -182,6 +182,138 @@
       </section>
     </div>
   </div>
+
+  <hr>
+  <!-- MODULE 3 -->
+  <section class="card intro" id="module3">
+    <h2>Module 3: Second-Order Response</h2>
+    <div class="eq">G(s) = ωₙ² / (s² + 2ζωₙs + ωₙ²)</div>
+    <p>Explore damping, overshoot, rise and settling times, poles, and the mass–spring–damper state-space model.</p>
+  </section>
+  <div class="layout">
+    <div class="col">
+      <section class="card predict" id="predict3"></section>
+      <section class="card">
+        <h2>Second-order sensor controls</h2>
+        <div class="ctl"><div class="seg" role="radiogroup" aria-label="Parameter mode">
+          <label><input type="radio" name="m3mode" value="zw" checked> ζ and ωₙ</label>
+          <label><input type="radio" name="m3mode" value="mbk"> m, b and k</label>
+        </div></div>
+        <div class="ctl"><label class="t" for="m3z"><span>Damping ratio ζ</span><output id="m3zv"></output></label><input id="m3z" type="range" min="0.1" max="3" step="0.05" value="0.5"></div>
+        <div class="ctl"><label class="t" for="m3w"><span>Natural frequency ωₙ</span><output id="m3wv"></output></label><input id="m3w" type="range" min="0.5" max="10" step="0.1" value="2"></div>
+        <div class="ctl"><label class="t" for="m3m"><span>Mass m (kg)</span><output id="m3mv"></output></label><input id="m3m" type="range" min="0.5" max="5" step="0.1" value="1"></div>
+        <div class="ctl"><label class="t" for="m3b"><span>Damping b (N·s/m)</span><output id="m3bv"></output></label><input id="m3b" type="range" min="0.1" max="20" step="0.1" value="2"></div>
+        <div class="ctl"><label class="t" for="m3k"><span>Stiffness k (N/m)</span><output id="m3kv"></output></label><input id="m3k" type="range" min="0.5" max="100" step="0.1" value="4"></div>
+        <div class="ctl"><strong>Settling band</strong><div class="seg">
+          <label><input type="radio" name="m3band" value="0.02" checked> ±2%</label>
+          <label><input type="radio" name="m3band" value="0.05"> ±5%</label>
+        </div></div>
+        <label class="chk"><input id="m3cmp" type="checkbox"> Compare all three damping cases</label>
+        <div class="btns"><button type="button" class="ghost m3pre" data-z="0.5">Underdamped</button><button type="button" class="ghost m3pre" data-z="1">Critical</button><button type="button" class="ghost m3pre" data-z="2">Overdamped</button></div>
+      </section>
+      <section class="card"><h2>Live readout</h2><dl id="readlist3"></dl></section>
+      <section class="card"><h2>Response measurements</h2><table><thead><tr><th>Metric</th><th>From curve</th><th>Formula</th></tr></thead><tbody id="m3body"></tbody></table><p class="note" id="m3formnote"></p></section>
+      <section class="card">
+        <h2>Validation check 4</h2>
+        <p class="note">ζ = 0.5: overshoot should be approximately 16.3%.</p>
+        <div class="btns"><button type="button" class="ghost m3chk" data-c="4">Set test parameters</button></div>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody4"></tbody></table>
+      </section>
+<section class="card">
+        <h2>Validation check 5</h2>
+        <p class="note">ζ = 1: critical damping has zero overshoot.</p>
+        <div class="btns"><button type="button" class="ghost m3chk" data-c="5">Set test parameters</button></div>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody5"></tbody></table>
+      </section>
+<section class="card">
+        <h2>Validation check 6</h2>
+        <p class="note">m = 1, b = 2, k = 4: eigenvalues and poles should be −1 ± j1.732.</p>
+        <div class="btns"><button type="button" class="ghost m3chk" data-c="6">Set test parameters</button></div>
+        <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbody6"></tbody></table>
+      </section>
+    </div>
+    <div class="col">
+      <section class="card"><h2>Second-order step response</h2><div id="chart5" class="chart tall"></div><p class="note" id="m3note1"></p></section>
+      <section class="card"><h2>Poles in the s-plane</h2><div id="chart6" class="chart"></div></section>
+      <section class="card"><h2>State-space representation</h2><div class="eq" style="white-space:pre;line-height:1.7" id="m3ss"></div><dl id="m3eig"></dl></section>
+      <section class="card"><h2>Phase-plane trajectory (x₁, x₂)</h2><div id="chart7" class="chart"></div><p class="note" id="m3note3"></p></section>
+    </div>
+  </div>
+
+<!-- MODULE 4 -->
+<section class="card" id="module4">
+  <h2>Module 4: Guess the Sensor</h2>
+
+  <p>
+    Look at the response graph and estimate the hidden sensor
+    parameters. Submit your guess to reveal the answer.
+  </p>
+
+  <p id="m4description">First-order sensor: unit-step input.</p>
+  <div style="margin:12px 0 18px">
+    <strong>How to estimate the hidden parameters</strong>
+    <div id="m4methodFirst">
+      <p class="note"><strong>63.2% method:</strong> Find the final output. The time when the response reaches 63.2% of its final change is approximately τ.</p>
+      <div class="eq">y(t) = K(1 − e⁻ᵗ/τ) &nbsp; | &nbsp; y(τ) = 0.632K</div>
+      <p class="note"><strong>Alternative log method:</strong> Plot the logarithm of the remaining error fraction against time; its slope is −1/τ.</p>
+      <div class="eq">ln[(y∞ − y(t))/y∞] = −t/τ &nbsp; | &nbsp; τ = −1/slope</div>
+    </div>
+    <div id="m4methodSine" hidden>
+  <p class="note">
+    Measure the delay Δt from an input peak to the next output peak.
+    Use radians when calculating the phase lag.
+  </p>
+  <div class="eq">
+    θ = ωΔt &nbsp; | &nbsp; τ = tan(θ)/ω
+  </div>
+  <div class="eq">
+    For ω = 2 rad/s: &nbsp; τ = tan(2Δt)/2
+  </div>
+</div>
+    <div id="m4methodSecond" hidden>
+      <p class="note">Find the first smooth peak height yₚ and its time tₚ. Since the final value is 1, use the fractional overshoot Mₚ = yₚ − 1.</p>
+      <div class="eq">Mₚ = e⁻πζ/√(1−ζ²) &nbsp; | &nbsp; ζ = −ln(Mₚ)/√(π² + ln²(Mₚ))</div>
+      <div class="eq">tₚ = π/(ωₙ√(1−ζ²)) &nbsp; | &nbsp; ωₙ = π/(tₚ√(1−ζ²))</div>
+      <p class="note">Ignore small noise spikes when estimating the peak. These equations apply to underdamped responses (0 &lt; ζ &lt; 1).</p>
+    </div>
+  </div>
+
+  <div id="m4first">
+    <label for="m4tau">Your estimate of τ (seconds):</label>
+    <input type="number" id="m4tau" min="0.01"
+           step="0.01" placeholder="Enter your guess">
+  </div>
+
+  <div id="m4second" hidden>
+    <p>
+      <label for="m4zeta">Your estimate of ζ:</label>
+      <input type="number" id="m4zeta" min="0.01"
+             step="0.01" placeholder="Damping ratio">
+    </p>
+    <p>
+      <label for="m4wn">Your estimate of ωₙ (rad/s):</label>
+      <input type="number" id="m4wn" min="0.01"
+             step="0.01" placeholder="Natural frequency">
+    </p>
+  </div>
+
+  <div class="btns">
+    <button type="button" id="m4check">Check my guess</button>
+    <button type="button" id="m4new">New sensor</button>
+    <button type="button" id="m4hint">Show hint</button>
+  </div>
+
+  <p id="m4feedback" aria-live="polite"></p>
+  <p id="m4hintText" aria-live="polite"></p>
+  <p id="m4score">Session score: 0 / 0 points (0 rounds)</p>
+  <p class="note">Blue: noisy measurement (before submission). After submission: green = true model, orange dashed = your estimate. Both estimated parameters must be within 10% for full marks.</p>
+  <div id="m4chart" class="chart"></div>
+  <section class="card" style="margin:18px 0 0;background:#fafbfc">
+    <h2>Module 4: Automatic self-test</h2>
+    <p class="note">Additional implementation checks (not part of the six official homework validation checks). These fixed tests do not reveal the current hidden sensor.</p>
+    <table><thead><tr><th>Check</th><th>Expected</th><th>Yours</th><th>Result</th></tr></thead><tbody id="vbodyM4"></tbody></table>
+  </section>
+</section>
 </main>
 
 <script>
@@ -225,7 +357,8 @@
     items.forEach(function (it) { if (cx + it.w > W - 10 && cx > 60) { rows++; cx = 60; } it.row = rows - 1; it.x = cx; cx += it.w; });
     var m = { l: 60, r: 18, t: 14, b: o.legend === false ? 46 : 46 + rows * 20 };
     var pw = W - m.l - m.r, ph = H - m.t - m.b;
-    var x0 = o.xr[0], x1 = o.xr[1], y0 = o.yr[0], y1 = o.yr[1];
+    var ranges = o.prep ? o.prep(pw, ph) : o;
+    var x0 = ranges.xr[0], x1 = ranges.xr[1], y0 = ranges.yr[0], y1 = ranges.yr[1];
     var fy = o.ylog ? function (v) { return Math.log10(Math.max(v, 1e-300)); } : function (v) { return v; };
     var sx = function (v) { return m.l + (v - x0) / (x1 - x0) * pw; };
     var sy = function (v) { return m.t + ph - (fy(v) - fy(y0)) / (fy(y1) - fy(y0)) * ph; };
@@ -471,27 +604,67 @@
     h2 += row('Dynamic Error (δ = M − 1)', f(M - 1, 3));
     $('readlist2').innerHTML = h2;
 
-    // Validation Check 2 & 3 evaluations
+    
+        // Fixed validation cases, independent of the sliders.
+    function validationRow(label, expected, actual, passed) {
+      return '<tr><td>' + label + '</td>' +
+        '<td class="num">' + expected + '</td>' +
+        '<td class="num">' + actual + '</td>' +
+        '<td class="' + (passed ? 'pass' : 'fail') + '">' +
+        (passed ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+    }
+
+    // Check 2: tau = 0.2 seconds, omega = 2 rad/s.
     var M_check2 = 1 / Math.sqrt(1 + Math.pow(2 * 0.2, 2));
-    var phi_check2 = -Math.atan(2 * 0.2) * (180 / Math.PI);
+    var phi_check2 = -Math.atan(2 * 0.2) * 180 / Math.PI;
 
-    var omega_50hz = 2 * Math.PI * 50;
-    var tau_check3 = 0.00052;
-    var M_check3 = 1 / Math.sqrt(1 + Math.pow(omega_50hz * tau_check3, 2));
-    var phi_check3 = -Math.atan(omega_50hz * tau_check3) * (180 / Math.PI);
+    $('vbody2').innerHTML =
+      validationRow(
+        'Amplitude ratio (τ = 0.2 s, ω = 2 rad/s)',
+        '0.93',
+        f(M_check2, 3),
+        Math.abs(M_check2 - 0.93) <= 0.005
+      ) +
+      validationRow(
+        'Phase shift',
+        '−21.8°',
+        f(phi_check2, 2) + '°',
+        Math.abs(phi_check2 + 21.8) <= 0.1
+      );
 
-    var okM2 = Math.abs(M - M_check2) <= 0.02 || (Math.abs(p2.tau - 0.2) < 0.01 && Math.abs(p2.omega - 2.0) < 0.5);
-    var okPhi2 = Math.abs(phiDeg - phi_check2) <= 2.0;
-    var okCheck3 = (M_check3 >= 0.95) && (Math.abs(phi_check3 - (-9.3)) <= 1.0);
+    // Check 3: at most 5% amplitude error up to 100 Hz.
+    var omega100 = 2 * Math.PI * 100;
+    var omega50 = 2 * Math.PI * 50;
 
-    // Box 2: Validation check 2
-    $('vbody2').innerHTML = '<tr><td>Sine amplitude (τ=0.2, ω=2)</td><td class="num">0.93</td><td class="num">' + f(M, 2) + '</td><td class="' + (okM2 ? 'pass' : 'fail') + '">' + (okM2 ? '✓ PASS' : '✗ FAIL') + '</td></tr>' +
-                            '<tr><td>Phase lag (degrees)</td><td class="num">-21.8°</td><td class="num">' + f(phiDeg, 1) + '°</td><td class="' + (okPhi2 ? 'pass' : 'fail') + '">' + (okPhi2 ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+    var tauMax = Math.sqrt(1 / Math.pow(0.95, 2) - 1)
+      / omega100;
 
-    // Box 3: Validation check 3
-    $('vbody3').innerHTML = '<tr><td>Signal up to 50Hz (τ=0.52ms, lag ~9.3°)</td><td class="num">PASS (≤5% err)</td><td class="num">' + (okCheck3 ? 'PASS' : 'VERIFIED') + '</td><td class="' + (okCheck3 ? 'pass' : 'fail') + '">' + (okCheck3 ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
-  }
+    var magnitude100 = 1 / Math.sqrt(
+      1 + Math.pow(omega100 * tauMax, 2)
+    );
 
+    var error100 = (1 - magnitude100) * 100;
+    var phase50 = -Math.atan(omega50 * tauMax) * 180 / Math.PI;
+
+    $('vbody3').innerHTML =
+      validationRow(
+        'Maximum τ for 100 Hz and 5% error',
+        '≈ 0.52 ms',
+        f(tauMax * 1000, 3) + ' ms',
+        Math.abs(tauMax * 1000 - 0.52) <= 0.01
+      ) +
+      validationRow(
+        'Amplitude error at 100 Hz using τmax',
+        '5.00%',
+        f(error100, 2) + '%',
+        Math.abs(error100 - 5) <= 0.001
+      ) +
+      validationRow(
+        'Phase shift at 50 Hz using τmax',
+        '≈ −9.3°',
+        f(phase50, 2) + '°',
+        Math.abs(phase50 + 9.3) <= 0.1
+      );}
   var QS = {
     step: [
       { q: 'A step of size A hits the sensor at t = 0. At t = τ, what fraction of the final change has the output made?', o: ['37 %', '50 %', '63 %', '95 %'], a: 2, why: 'At t = τ y = 0.632·K·A.', how: 'Check the orange dot.' },
@@ -665,10 +838,12 @@
     add('Eigenvalues of A, imaginary part (±j)', 1.732, Math.abs(V3.e[0].im), 0.001, 3);
     add('Poles of G(s), real part (same numbers)', -1, V3.pl[0].re, 0.001, 3);
     add('Poles of G(s), imaginary part (±j)', 1.732, Math.abs(V3.pl[0].im), 0.001, 3);
-    $('vbody3').innerHTML = rows.map(function (r, idx) {
-      var tag = idx === 0 ? 'Check 4. ' : idx === 1 ? 'Check 5. ' : idx === 2 ? 'Check 6. ' : '';
-      return '<tr><td>' + tag + r[0] + '</td><td class="num">' + f(r[1], r[4]) + '</td><td class="num">' + f(r[2], r[4]) + '</td><td class="' + (r[3] ? 'pass' : 'fail') + '">' + (r[3] ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
-    }).join('');
+    var groups = { 4: rows.slice(0, 1), 5: rows.slice(1, 2), 6: rows.slice(2) };
+    [4, 5, 6].forEach(function (num) {
+      $('vbody' + num).innerHTML = groups[num].map(function (r) {
+        return '<tr><td>' + r[0] + '</td><td class="num">' + f(r[1], r[4]) + '</td><td class="num">' + f(r[2], r[4]) + '</td><td class="' + (r[3] ? 'pass' : 'fail') + '">' + (r[3] ? '✓ PASS' : '✗ FAIL') + '</td></tr>';
+      }).join('');
+    });
   }
 
   function drawModule3() {
@@ -862,7 +1037,7 @@
       drawCharts(p); drawReadouts(p); drawValidation(p);
       var p2 = read2();
       drawModule2(p2);
-      drawModule3();
+      // Module 3 updates independently through update3().
       $('err').hidden = true;
     } catch (e) {
       $('err').hidden = false;
@@ -877,7 +1052,275 @@
   watch($('chart1')); watch($('chart2')); watch($('chart3')); watch($('chart4'));
   renderQuestion();
   wire3();
+  update3();
   update();
+    // MODULE 4: Guess the Sensor
+  var m4TrueTau = 0.5 + Math.random() * 1.5;
+  var m4TrueK = 0.5 + Math.random() * 2.5;
+  var m4Type = 'first';
+  var m4Input = 'step';
+var m4Omega = 2;
+
+function m4Sine(tau, t) {
+  var amplitude = m4TrueK /
+    Math.sqrt(1 + Math.pow(m4Omega * tau, 2));
+
+  var phase = -Math.atan(m4Omega * tau);
+
+  return amplitude * Math.sin(m4Omega * t + phase);
+}
+var m4TrueZeta = 0.5;
+var m4TrueWn = 2;
+
+function m4Response(t) {
+  if (m4Type === 'first') {
+    if (m4Input === 'sine') {
+      return m4Sine(m4TrueTau, t);
+    }
+
+    return yStep(m4TrueK, 1, m4TrueTau, t);
+  }
+
+  return ySecond(m4TrueZeta, m4TrueWn, t);
+}
+var m4Points = 0;
+var m4Rounds = 0;
+
+function makeM4Noise() {
+  return Array.from({ length: 301 }, function () {
+    return (Math.random() - 0.5) * 0.02;
+  });
+}
+var m4Noise = makeM4Noise();
+  function drawM4(guess, guessWn) {
+  var m4Times = [];
+  var m4Outputs = [];
+
+  for (var i = 0; i <= 300; i++) {
+    var t = i * 12 / 300;
+    m4Times.push(t);
+    m4Outputs.push(m4Response(t));
+  }
+  var curves = [{
+  x: m4Times,
+  y: m4Outputs.map(function (output, i) {
+    return output + m4Noise[i];
+  }),
+  color: BLUE,
+  width: 2.5,
+  name: 'Measured response'
+}];
+
+  if (
+  Number.isFinite(guess) && guess > 0 &&
+  (m4Type === 'first' ||
+   (Number.isFinite(guessWn) && guessWn > 0))
+) {
+      curves.push({
+    x: m4Times,
+    y: m4Outputs,
+    color: '#16a34a',
+    width: 5,
+    name: 'True response'
+  });
+    var guessedOutputs = m4Times.map(function (t) {
+ if (m4Type === 'first') {
+  return m4Input === 'sine'
+    ? m4Sine(guess, t)
+    : yStep(m4TrueK, 1, guess, t);
+}
+
+  return ySecond(guess, guessWn, t);
+});
+
+    curves.push({
+      x: m4Times,
+      y: guessedOutputs,
+      color: '#f97316',
+      dash: '7 5',
+      name: 'Your guess'
+    });
+  }
+  if (m4Input === 'sine') {
+  curves.push({
+    x: m4Times,
+    y: m4Times.map(function (t) {
+      return Math.sin(m4Omega * t);
+    }),
+    color: '#64748b',
+    dash: '5 5',
+    width: 2,
+    name: 'Input sin(2t)'
+  });
+}
+  if (curves.length > 1) curves.push(curves.shift()); // keep measured curve on top
+  chart($('m4chart'), {
+    xr: [0, 12],
+    yr: m4Input === 'sine'
+  ? [-3.3, 3.3]
+  : (m4Type === 'first' ? [-0.05, 3.3] : [-0.05, 2.1]),
+    xlabel: 'Time (seconds)',
+    ylabel: 'Sensor output',
+    series: curves 
+  });
+  }
+  // Fixed, independent tests: these never access the randomly hidden parameters.
+  function validateM4() {
+    var results = [];
+    function add(label, expected, actual, ok) {
+      results.push('<tr><td>' + label + '</td><td class="num">' + expected +
+        '</td><td class="num">' + actual + '</td><td class="' + (ok ? 'pass' : 'fail') +
+        '">' + (ok ? '✓ PASS' : '✗ FAIL') + '</td></tr>');
+    }
+    var tau = 2, gain = 1.5;
+    var stepAtTau = yStep(gain, 1, tau, tau);
+    var stepExpected = gain * (1 - Math.exp(-1));
+    add('First-order response at t = τ', f(stepExpected, 4), f(stepAtTau, 4), Math.abs(stepAtTau - stepExpected) < 1e-10);
+    var z = 0.5, wn = 2, tp = Math.PI / (wn * Math.sqrt(1 - z*z));
+    var overshoot = 100 * (ySecond(z, wn, tp) - 1);
+    add('Second-order peak overshoot (ζ = 0.5)', '≈ 16.3%', f(overshoot, 2) + '%', Math.abs(overshoot - 16.3) < 0.1);
+    var zRecovered = -Math.log(overshoot / 100) / Math.sqrt(Math.PI*Math.PI + Math.pow(Math.log(overshoot / 100), 2));
+    var wnRecovered = Math.PI / (tp * Math.sqrt(1 - zRecovered*zRecovered));
+    add('Recover ζ from overshoot', '0.500', f(zRecovered, 3), Math.abs(zRecovered - z) < 1e-6);
+    add('Recover ωₙ from peak time', '2.000', f(wnRecovered, 3), Math.abs(wnRecovered - wn) < 1e-6);
+    var within = Math.abs(1.09 - 1) / 1 * 100 <= 10;
+    var outside = Math.abs(1.11 - 1) / 1 * 100 <= 10;
+    add('10% scoring threshold', '9%: full; 11%: none', (within ? 'full' : 'none') + '; ' + (outside ? 'full' : 'none'), within && !outside);
+    $('vbodyM4').innerHTML = results.join('');
+  }
+  validateM4();
+  watch($('m4chart'));
+
+    function newM4Sensor() {
+  m4Type = Math.random() < 0.5 ? 'first' : 'second';
+  m4Input = m4Type === 'first' && Math.random() < 0.5
+  ? 'sine'
+  : 'step';
+
+m4Omega = 2;
+  m4TrueTau = 0.5 + Math.random() * 1.5;
+  m4TrueK = 0.5 + Math.random() * 2.5;
+  m4TrueZeta = 0.25 + Math.random() * 0.35;
+  m4TrueWn = 2 + Math.random() * 3;
+  m4Noise = makeM4Noise();
+
+  var first = m4Type === 'first';
+
+  $('m4first').hidden = !first;
+  $('m4second').hidden = first;
+  $('m4methodFirst').hidden = !first || m4Input === 'sine';
+  $('m4methodSecond').hidden = first;
+$('m4methodSine').hidden = !(first && m4Input === 'sine');
+$('m4description').textContent = first
+  ? (m4Input === 'sine'
+      ? 'First-order sensor: steady-state response to x(t) = sin(2t). ω = 2 rad/s. Estimate τ from the lag.'
+      : 'First-order sensor: unit-step input.')
+  : 'Second-order sensor: unit-step input, K = 1. Estimate ζ and ωₙ.';
+
+  ['m4tau', 'm4zeta', 'm4wn'].forEach(function (id) {
+    $(id).value = '';
+    $(id).disabled = false;
+  });
+
+ $('m4check').disabled = false;
+$('m4hintText').textContent = '';
+$('m4feedback').textContent = '';
+
+  drawM4();
+}
+
+$('m4new').addEventListener('click', newM4Sensor);
+newM4Sensor();
+    $('m4hint').addEventListener('click', function () {
+  if (m4Type === 'first' && m4Input === 'sine') {
+    $('m4hintText').textContent =
+      'Measure Δt from a grey input peak to the next blue output peak. ' +
+      'The phase-lag magnitude is θ = ω × Δt radians. ' +
+      'Then τ = tan(θ) / ω. Here ω = 2 rad/s, ' +
+      'so τ = tan(2 × Δt) / 2. Use radians on your calculator.';
+  } else if (m4Type === 'first') {
+    $('m4hintText').textContent =
+      'Find 63.2% of the final output. ' +
+      'The time when the curve reaches that level is approximately τ.';
+  } else {
+    $('m4hintText').textContent =
+      'Estimate the first peak height and its time tp. ' +
+      'With final output 1, let Mp = peak height − 1. ' +
+      'Then ζ = −ln(Mp) / √(π² + ln(Mp)²), ' +
+      'and ωₙ = π / (tp × √(1 − ζ²)). ' +
+      'Estimate the smooth peak through the noise.';
+  }
+});
+   $('m4check').addEventListener('click', function () {
+  if ($('m4check').disabled) return;
+
+  var guess;
+  var guessWn;
+  var error;
+  var details;
+
+  if (m4Type === 'first') {
+    guess = $('m4tau').value.trim() === '' ? NaN : Number($('m4tau').value);
+
+    if (!Number.isFinite(guess) || guess <= 0) {
+      $('m4feedback').textContent =
+        'Please enter a positive number for τ.';
+      return;
+    }
+
+    error = Math.abs(guess - m4TrueTau) / m4TrueTau * 100;
+
+    details =
+      'True τ = ' + m4TrueTau.toFixed(2) + ' seconds. ' +
+      'True K = ' + m4TrueK.toFixed(2) + '. ' +
+      'Your τ error = ' + error.toFixed(1) + '%. ';
+  } else {
+    guess = $('m4zeta').value.trim() === '' ? NaN : Number($('m4zeta').value);
+    guessWn = $('m4wn').value.trim() === '' ? NaN : Number($('m4wn').value);
+
+    if (
+      !Number.isFinite(guess) || guess <= 0 || guess >= 1 ||
+      !Number.isFinite(guessWn) || guessWn <= 0
+    ) {
+      $('m4feedback').textContent =
+        'Please enter 0 < ζ < 1 and a positive ωₙ.';
+      return;
+    }
+
+    var zetaError =
+      Math.abs(guess - m4TrueZeta) / m4TrueZeta * 100;
+
+    var wnError =
+      Math.abs(guessWn - m4TrueWn) / m4TrueWn * 100;
+
+    error = Math.max(zetaError, wnError);
+
+    details =
+      'True ζ = ' + m4TrueZeta.toFixed(2) +
+      '; your error = ' + zetaError.toFixed(1) + '%. ' +
+      'True ωₙ = ' + m4TrueWn.toFixed(2) +
+      ' rad/s; your error = ' + wnError.toFixed(1) + '%. ';
+  }
+
+  drawM4(guess, guessWn);
+
+  var fullMarks = error <= 10 + 1e-9;
+
+  m4Rounds++;
+  m4Points += fullMarks ? 10 : 0;
+
+  $('m4score').textContent =
+    'Session score: ' + m4Points + ' / ' +
+    (m4Rounds * 10) + ' points (' + m4Rounds + ' rounds)';
+
+  $('m4feedback').textContent =
+    details + (fullMarks ? 'Full marks!' : 'Outside the 10% range.');
+
+  $('m4check').disabled = true;
+  $('m4tau').disabled = true;
+  $('m4zeta').disabled = true;
+  $('m4wn').disabled = true;
+});
 })();
 </script>
 
