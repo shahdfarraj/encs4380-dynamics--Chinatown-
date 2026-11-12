@@ -166,6 +166,7 @@ Pull Request: #5
 <img width="1920" height="1016" alt="image" src="screenshot2.png" />
 
 **frequency controls & readout**
+
 <img width="255" height="546" alt="image" src="https://github.com/user-attachments/assets/5a41e686-ead8-4ae7-acc9-e94eea8d4bb1" />
 
 
